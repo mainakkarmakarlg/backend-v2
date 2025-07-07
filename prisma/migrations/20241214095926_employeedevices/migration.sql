@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "EmployeeDevices" ALTER COLUMN "name" DROP NOT NULL,
+ALTER COLUMN "deviceId" DROP NOT NULL,
+ALTER COLUMN "type" DROP NOT NULL;

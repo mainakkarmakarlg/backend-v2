@@ -1,0 +1,2007 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                   Int                         @id @default(autoincrement())
+  fname                String?
+  lname                String?
+  email                String?                     @unique
+  password             String?
+  phone                String?
+  countryCode          String?
+  profile              String?
+  username             String?
+  createdAt            DateTime                    @default(now())
+  updatedAt            DateTime                    @updatedAt
+  Billing              UserBilling[]
+  Course               UserToCourse[]
+  Meta                 UserMeta?
+  MetaHistory          UserMetaHistory[]
+  RefreshTokens        UserRefreshToken[]
+  Shipping             UserShipping[]
+  Platform             UserToPlatform?
+  UnverifiedFields     UserUnverified[]
+  Testimonials         UserTestimonials[]
+  UserContactForm      UserContactForm[]
+  Invoice              UserInvoice[]
+  UserForPayments      UserPayments[]              @relation("UserFromRelation")
+  UserPayment          UserPayments[]              @relation("UserRelation")
+  Courier              UserCourier[]
+  DoubtQuestion        DoubtQuestion[]
+  DoubtQuestionView    DoubtQuestionView[]
+  DoubtQuestionLike    DoubtQuestionLike[]
+  DoubtQuestionReport  DoubtQuestionReport[]
+  DoubtAnswer          DoubtAnswer[]
+  DoubtAnswerLike      DoubtAnswerLike[]
+  DoubtAnswerReport    DoubtAnswerReport[]
+  Lecture              UserToVideoInfo[]
+  LectureFlag          UserToVideoInfoFlag[]
+  LectureFeedback      UserToVideoInfoFeedback[]
+  PracticeFlag         UserPracticeQuestionFlag[]
+  PracticeAttempt      UserPracticeAttempt[]
+  Device               UserToDevice[]
+  DeviceHistory        UserDeviceHistory[]
+  PracticeReport       PracticeQuestionReport[]
+  DoubtPinned          DoubtForumPin[]
+  SolutionNumber       SolutionNumber[]
+  Leads                UserLead[]
+  Cart                 UserCart[]
+  NewAccountActivity   UserLeadActivity[]
+  Quiz                 QuizToUser[]
+  UserQuizQuestionFlag UserQuizQuestionFlag[]
+  QuizQuestionReport   QuizQuestionReport[]
+  Event                EventToUser[]
+  Results              CourseSubjectResultToUser[]
+  Forms                UserFormToUser[]
+  QuizCheating         QuizUserCheating[]
+  UserCourseMeta       CourseUserMeta[]
+  // Blog                 BlogToUser[]
+  QuizFeedback         QuizFeedback[]
+  QuizAttemp           UserQuizAttempt[]
+}
+
+model SolutionNumber {
+  userId Int    @unique
+  number String
+  User   User   @relation(fields: [userId], references: [id])
+}
+
+model UserToCourse {
+  userId    Int
+  courseId  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  User      User     @relation(fields: [userId], references: [id])
+  Course    Course   @relation(fields: [courseId], references: [id])
+
+  @@id([userId, courseId])
+}
+
+model UserUnverified {
+  id        Int      @id @default(autoincrement())
+  field     String
+  userId    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  User      User     @relation(fields: [userId], references: [id])
+}
+
+model UserRefreshToken {
+  userId     Int
+  platformId Int
+  token      String    @unique
+  isOnline   Boolean?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime? @updatedAt
+  Platform   Platform  @relation(fields: [platformId], references: [id])
+  User       User      @relation(fields: [userId], references: [id])
+}
+
+model UserBilling {
+  id          Int              @id @default(autoincrement())
+  fname       String?
+  lname       String?
+  email       String?
+  countryCode String?
+  phone       String?
+  address     String?
+  city        String?
+  state       String?
+  country     String?
+  pincode     String?
+  userId      Int
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  Company     BillingCompany[]
+  User        User             @relation(fields: [userId], references: [id])
+}
+
+model BillingCompany {
+  id      Int          @id @default(autoincrement())
+  name    String?
+  gstNo   String?
+  address String?
+  billId  Int?
+  Billing UserBilling? @relation(fields: [billId], references: [id])
+}
+
+model UserShipping {
+  id          Int      @id @default(autoincrement())
+  fname       String?
+  lname       String?
+  email       String?
+  countryCode String?
+  phone       String?
+  address     String?
+  city        String?
+  state       String?
+  country     String?
+  pincode     String?
+  userId      Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  User        User     @relation(fields: [userId], references: [id])
+}
+
+model UserCourier {
+  id                Int             @id @default(autoincrement())
+  trackingId        String
+  status            String?
+  shippingId        String?
+  userId            Int?
+  shippingCompanyId Int
+  paymentId         Int?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  User              User?           @relation(fields: [userId], references: [id])
+  Company           ShippingCompany @relation(fields: [shippingCompanyId], references: [id])
+  Payment           UserPayments?   @relation(fields: [paymentId], references: [id])
+}
+
+model ShippingCompany {
+  id        Int           @id @default(autoincrement())
+  name      String
+  code      String?
+  createdAt DateTime      @default(now())
+  Courier   UserCourier[]
+}
+
+model UserPayments {
+  id             Int                 @id @default(autoincrement())
+  orderId        String
+  gatewayId      Int
+  gatewayOrderId String?
+  status         String
+  amount         Int
+  userId         Int
+  someElse       Boolean?
+  userFor        Int?
+  createdAt      DateTime            @default(now())
+  platformId     Int
+  updatedAt      DateTime            @updatedAt
+  cartId         Json?
+  reciept        Json?
+  UserFor        User?               @relation("UserFromRelation", fields: [userFor], references: [id])
+  User           User                @relation("UserRelation", fields: [userId], references: [id])
+  Cart           UserCart[]
+  Gatway         PaymentGatways      @relation(fields: [gatewayId], references: [id])
+  Platform       Platform            @relation(fields: [platformId], references: [id])
+  Invoice        UserInvoice[]
+  Courier        UserCourier[]
+  PaymentDetails UserPaymentDetail[]
+  LeadActivity   UserLeadActivity[]
+}
+
+model UserPaymentDetail {
+  id        Int          @id @default(autoincrement())
+  payment   String?
+  method    String?
+  fee       Int?
+  tax       Int?
+  paymentId Int
+  Payment   UserPayments @relation(fields: [paymentId], references: [id])
+}
+
+model PaymentSettlement {
+  id        Int      @id @default(autoincrement())
+  amount    Int
+  status    String
+  fees      Int
+  tax       Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model UserInvoice {
+  id                  Int            @id @default(autoincrement())
+  userId              Int
+  gatewayId           Int
+  paymentId           Int
+  paymentMode         String?
+  transactionId       String?
+  paymentType         String?
+  orderId             String?
+  fname               String?
+  lname               String?
+  email               String?
+  countryCode         String?
+  phone               String?
+  products            Json?
+  billingFname        String?
+  billingLname        String?
+  billingEmail        String?
+  billingCountryCode  String?
+  billingPhone        String?
+  billingAddress      String?
+  billingCity         String?
+  billingState        String?
+  billingCountry      String?
+  billingPincode      String?
+  shippingFname       String?
+  shippingLname       String?
+  shippingEmail       String?
+  shippingCountryCode String?
+  shippingPhone       String?
+  shippingAddress     String?
+  shippingState       String?
+  shippingCity        String?
+  shippingCountry     String?
+  shippingPincode     String?
+  companyName         String?
+  companyGST          String?
+  priceJson           Json?
+  templateId          Int?
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+  User                User           @relation(fields: [userId], references: [id])
+  Payment             UserPayments   @relation(fields: [paymentId], references: [id])
+  Gateway             PaymentGatways @relation(fields: [gatewayId], references: [id])
+}
+
+model PaymentGatways {
+  id       Int                        @id @default(autoincrement())
+  name     String
+  prefix   String
+  mode     String?
+  Platform PaymentGatwaysToPlatform[]
+  Payments UserPayments[]
+  Invoice  UserInvoice[]
+}
+
+model PaymentGatwaysToPlatform {
+  id         Int            @id @default(autoincrement())
+  gatewayId  Int
+  platformId Int
+  isActive   Boolean
+  Gateway    PaymentGatways @relation(fields: [gatewayId], references: [id])
+  Platform   Platform       @relation(fields: [platformId], references: [id])
+}
+
+model UserMeta {
+  id                  Int       @id @default(autoincrement())
+  gender              String?
+  dob                 DateTime?
+  whatsappCountryCode String?
+  whatsappNumber      String?   @unique
+  social              Json?
+  bio                 String?
+  occupation          String?
+  userId              Int       @unique
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  User                User      @relation(fields: [userId], references: [id])
+}
+
+model UserMetaHistory {
+  id         Int       @id @default(autoincrement())
+  field      String
+  valueText  String?
+  valueJson  Json?
+  userId     Int
+  employeeId Int?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  Employee   Employee? @relation(fields: [employeeId], references: [id])
+  User       User      @relation(fields: [userId], references: [id])
+}
+
+model UserCart {
+  id           Int                  @id @default(autoincrement())
+  courseId     Int?
+  productId    Int?
+  userId       Int
+  isComplete   Boolean
+  status       String
+  createdAt    DateTime             @default(now())
+  quantity     Int?
+  updatedAt    DateTime             @updatedAt
+  paymentId    Int?
+  Payment      UserPayments?        @relation(fields: [paymentId], references: [id])
+  ExtraOptions ExtraOptionsToCart[]
+  Course       Course?              @relation(fields: [courseId], references: [id])
+  Product      Product?             @relation(fields: [productId], references: [id])
+  User         User                 @relation(fields: [userId], references: [id])
+  LeadActivity UserLeadActivity[]
+}
+
+model Course {
+  id                  Int                                 @id @default(autoincrement())
+  name                String
+  abbr                String?
+  courseId            Int?
+  order               Int?
+  type                String?
+  expiry              DateTime?
+  includeParent       Boolean?
+  isActive            Boolean?
+  BannedLocation      BannedLocation[]
+  Course              Course?                             @relation("CoursesToCourse", fields: [courseId], references: [id])
+  Courses             Course[]                            @relation("CoursesToCourse")
+  Meta                CourseMeta[]
+  Options             CourseOption[]
+  Subjects            CourseSubjectToCourse[]
+  Events              EventsToCourseNdPlatform[]
+  ExtraOptions        ExtraOption[]
+  Faq                 FaqToCourseNdPlatform[]
+  DeliveryCharge      PackageDeliveryCharge[]
+  Platform            PlatformToCourse[]
+  Cart                UserCart[]
+  UserTestimonial     UserTestimonialToCoursendPlatform[]
+  UserContactForm     UserContactFormToProductNdCourse[]
+  PackageInfo         PackageInfo[]
+  FormulaExplaination FormulaExplainationToCourse[]
+  User                UserToCourse[]
+  FallNumber          FallNumberToCourse[]
+  SolutionCombination SolutionCombination[]
+  Lectures            LectureToCourse[]
+  PracticeAttempt     UserPracticeAttempt[]
+  DoubtForumSource    DoubtForumSource[]
+  LeadSource          EmployeeToLeadSource[]
+  Leads               UserLeadToCourseNdProduct[]
+  Quiz                QuizToPlatformNdCourse[]
+  QuizAttempt         UserQuizAttempt[]
+  Results             CourseSubjectResultToUser[]
+  Forms               UserFormToCourse[]
+  Template            CourseTemplate[]
+  UserCourseMeta      CourseUserMeta[]
+  // Blog                BlogToCourse[]
+}
+
+model CourseTemplate {
+  id          Int      @id @default(autoincrement())
+  name        String
+  templateId  String
+  platformId  Int
+  senderEmail String?
+  senderName  String?
+  courseId    Int
+  Platform    Platform @relation(fields: [platformId], references: [id])
+  Course      Course   @relation(fields: [courseId], references: [id])
+}
+
+model CourseUserMeta {
+  id           Int      @id @default(autoincrement())
+  userId       Int
+  courseId     Int
+  enrollmentId String?
+  isCompleted  Boolean?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  User         User     @relation(fields: [userId], references: [id])
+  Course       Course   @relation(fields: [courseId], references: [id])
+}
+
+model SolutionCombination {
+  id          Int    @id @default(autoincrement())
+  courseId    Int
+  combination String
+  Course      Course @relation(fields: [courseId], references: [id])
+}
+
+model CourseMeta {
+  id               Int      @id @default(autoincrement())
+  courseLogo       String?
+  longDescription  Json?
+  shortDescription String?
+  courseId         Int
+  price            Decimal?
+  purchasable      Boolean?
+  hours            Int?
+  Course           Course   @relation(fields: [courseId], references: [id])
+}
+
+model CourseOption {
+  id        Int     @id @default(autoincrement())
+  key       String
+  valueJson Json?
+  courseId  Int
+  type      String?
+  valueText String?
+  Course    Course  @relation(fields: [courseId], references: [id])
+}
+
+model CourseSubject {
+  id         Int                         @id @default(autoincrement())
+  name       String
+  order      Int?
+  type       String?
+  subjectId  Int?
+  Subject    CourseSubject?              @relation("SubjectToSubject", fields: [subjectId], references: [id])
+  Subjects   CourseSubject[]             @relation("SubjectToSubject")
+  Excluded   ExcludeFromService[]
+  FallNumber FallNumberToSubject[]
+  Course     CourseSubjectToCourse[]
+  Result     CourseSubjectResultToUser[]
+}
+
+model CourseSubjectToCourse {
+  courseId  Int
+  subjectId Int
+  Course    Course        @relation(fields: [courseId], references: [id])
+  CourseSub CourseSubject @relation(fields: [subjectId], references: [id])
+
+  @@id([courseId, subjectId])
+}
+
+model CourseSubjectResultToUser {
+  id        Int           @id @default(autoincrement())
+  userId    Int
+  subjectId Int
+  courseId  Int
+  result    Int?
+  range     String?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  User      User          @relation(fields: [userId], references: [id])
+  Subject   CourseSubject @relation(fields: [subjectId], references: [id])
+  Course    Course        @relation(fields: [courseId], references: [id])
+}
+
+model FallNumber {
+  id                       Int                            @id @default(autoincrement())
+  number                   String
+  Subject                  FallNumberToSubject[]
+  Course                   FallNumberToCourse[]
+  Formula                  FormulaToFallNumber[]
+  PracticeQuestion         PracticeQuestiontoFallNumber[]
+  VideoInfo                FallNumberToVideoInfo[]
+  DoubtQuestion            DoubtQuestion[]
+  QuizQuestiontoFallNumber QuizQuestiontoFallNumber[]
+}
+
+model FallNumberToCourse {
+  id       Int        @id @default(autoincrement())
+  fallId   Int
+  courseId Int
+  Fall     FallNumber @relation(fields: [fallId], references: [id])
+  Course   Course     @relation(fields: [courseId], references: [id])
+}
+
+model FallNumberToSubject {
+  id        Int           @id @default(autoincrement())
+  fallId    Int
+  subjectId Int
+  Fall      FallNumber    @relation(fields: [fallId], references: [id])
+  Subject   CourseSubject @relation(fields: [subjectId], references: [id])
+}
+
+model Quiz {
+  id               Int                      @id @default(autoincrement())
+  name             String?
+  resultType       String? //never, after-quiz, after-submit,
+  accessType       String? //free, registered, paid
+  timeType         String? // duration , fixed
+  duration         Int?
+  isActive         Boolean?
+  attemptType      String? //single, multiple, repeat , 3
+  quizId           Int?
+  startTime        DateTime?
+  endTime          DateTime?
+  notified         Boolean?
+  createdAt        DateTime                 @default(now())
+  updatedAt        DateTime                 @updatedAt
+  Meta             QuizMeta?
+  Options          QuizMetaOption[]
+  Attempts         UserQuizAttempt[]
+  Questions        QuizQuestion[]
+  Quiz             Quiz?                    @relation("QuizToQuiz", fields: [quizId], references: [id])
+  Quizzes          Quiz[]                   @relation("QuizToQuiz")
+  CourseNdPlatform QuizToPlatformNdCourse[]
+  User             QuizToUser[] // added
+  QuizTemplate     QuizTemplate[]
+  Feedback         QuizFeedback[]
+}
+
+model QuizFeedback {
+  id        Int      @id @default(autoincrement())
+  quizId    Int
+  userId    Int
+  feedback  Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Quiz      Quiz     @relation(fields: [quizId], references: [id])
+  User      User     @relation(fields: [userId], references: [id])
+}
+
+model QuizTemplate {
+  id          Int      @id @default(autoincrement())
+  name        String
+  templateId  String
+  platformId  Int
+  senderEmail String?
+  senderName  String?
+  quizId      Int
+  Platform    Platform @relation(fields: [platformId], references: [id])
+  Quiz        Quiz     @relation(fields: [quizId], references: [id])
+}
+
+model QuizMeta {
+  id               Int       @id @default(autoincrement())
+  quizId           Int       @unique
+  longDescription  String?
+  shortDescription String?
+  logo             String?
+  regStartTime     DateTime?
+  regEndTime       DateTime?
+  Quiz             Quiz      @relation(fields: [quizId], references: [id])
+}
+
+model QuizMetaOption {
+  id        Int      @id @default(autoincrement())
+  key       String
+  valueJson Json?
+  valueText String?
+  quizId    Int
+  type      String?
+  Quiz      Quiz     @relation(fields: [quizId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model QuizToPlatformNdCourse {
+  id         Int      @id @default(autoincrement())
+  quizId     Int
+  courseId   Int?
+  platformId Int
+  interface  String?
+  slug       String?
+  Quiz       Quiz     @relation(fields: [quizId], references: [id])
+  Course     Course?  @relation(fields: [courseId], references: [id])
+  Platform   Platform @relation(fields: [platformId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model QuizQuestion {
+  id           Int                        @id @default(autoincrement())
+  question     String
+  score        String?
+  averageTime  String?
+  difficulty   Int?
+  attachment   Json?
+  quizId       Int?
+  order        Int?
+  canShuffle   Boolean?
+  questionId   Int?
+  questionCode String?
+  type         String?
+  attribute    String?
+  createdAt    DateTime                   @default(now())
+  updatedAt    DateTime                   @updatedAt
+  Question     QuizQuestion?              @relation("QuizQuestionToQuizQuestion", fields: [questionId], references: [id])
+  Questions    QuizQuestion[]             @relation("QuizQuestionToQuizQuestion")
+  Quiz         Quiz?                      @relation(fields: [quizId], references: [id])
+  Option       QuizQuestionOption[]
+  Explaination QuizQuestionExplaination?
+  Answers      UserQuizAnswer[]
+  UserFlags    UserQuizQuestionFlag[]
+  UserReports  QuizQuestionReport[]
+  FallNumber   QuizQuestiontoFallNumber[]
+  UserCheating QuizUserCheating[]
+}
+
+model QuizQuestionExplaination {
+  questionId Int          @unique
+  text       String
+  attachment Json?
+  Question   QuizQuestion @relation(fields: [questionId], references: [id])
+}
+
+model QuizQuestionOption {
+  id           Int                      @id @default(autoincrement())
+  answer       String
+  attachment   Json?
+  questionId   Int
+  Question     QuizQuestion             @relation(fields: [questionId], references: [id])
+  RightOption  QuizRightOption?
+  Explaination QuizOptionExplaination[]
+  Answers      UserQuizAnswer[]
+}
+
+model QuizUserCheating {
+  id         Int             @id @default(autoincrement())
+  userId     Int
+  attemptId  Int
+  questionId Int
+  offense    String?
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+  User       User            @relation(fields: [userId], references: [id])
+  Attempt    UserQuizAttempt @relation(fields: [attemptId], references: [id])
+  Question   QuizQuestion    @relation(fields: [questionId], references: [id])
+}
+
+model QuizRightOption {
+  optionId Int                @unique
+  Option   QuizQuestionOption @relation(fields: [optionId], references: [id])
+}
+
+model QuizOptionExplaination {
+  optionId   Int                @unique
+  text       String
+  attachment Json?
+  Option     QuizQuestionOption @relation(fields: [optionId], references: [id])
+}
+
+model UserPracticeAttempt {
+  id           Int                  @id @default(autoincrement())
+  userId       Int
+  name         String?
+  courseId     Int
+  subject      Json?
+  timeTaken    Int?
+  hasSubmitted Boolean?
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+  Answer       UserPracticeAnswer[]
+  User         User                 @relation(fields: [userId], references: [id])
+  Course       Course               @relation(fields: [courseId], references: [id])
+}
+
+model UserPracticeAnswer {
+  optionId     Int?
+  hasSubmitted Boolean?
+  order        Int?
+  attemptId    Int
+  questionId   Int
+  difficulty   Int?
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+  timeTaken    Int?
+  Attempt      UserPracticeAttempt @relation(fields: [attemptId], references: [id])
+  Question     PracticeQuestion    @relation(fields: [questionId], references: [id])
+  Option       PracticeOption?     @relation(fields: [optionId], references: [id])
+
+  @@id([attemptId, questionId])
+}
+
+model UserPracticeQuestionFlag {
+  id         Int              @id @default(autoincrement())
+  questionId Int
+  userId     Int
+  flagText   String?
+  removed    Boolean?
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+  User       User             @relation(fields: [userId], references: [id])
+  Question   PracticeQuestion @relation(fields: [questionId], references: [id])
+}
+
+model PracticeQuestion {
+  id             Int                               @id @default(autoincrement())
+  question       String
+  score          String?
+  averageTime    String?
+  difficulty     Int?
+  attachment     Json?
+  questionId     Int?
+  attribute      String?
+  questionCode   String?
+  createdAt      DateTime                          @default(now())
+  updatedAt      DateTime                          @updatedAt
+  Option         PracticeOption[]
+  Question       PracticeQuestion?                 @relation("PracticeQuestionToPracticeQuestion", fields: [questionId], references: [id])
+  Questions      PracticeQuestion[]                @relation("PracticeQuestionToPracticeQuestion")
+  Attempt        UserPracticeAnswer[]
+  UserFlag       UserPracticeQuestionFlag[]
+  FallNumber     PracticeQuestiontoFallNumber[]
+  Explaination   PracticeQuestionExplaination?
+  Report         PracticeQuestionReport[]
+  DoubtQuestions DoubtQuestionToPracticeQuestion[]
+}
+
+model PracticeQuestionReport {
+  questionId Int
+  userId     Int
+  reason     String?
+  User       User             @relation(fields: [userId], references: [id])
+  Question   PracticeQuestion @relation(fields: [questionId], references: [id])
+  tag        Json?
+
+  @@id([userId, questionId])
+}
+
+model PracticeQuestiontoFallNumber {
+  questionId   Int
+  fallNumberId Int
+  Question     PracticeQuestion @relation(fields: [questionId], references: [id])
+  FallNumber   FallNumber       @relation(fields: [fallNumberId], references: [id])
+
+  @@id([questionId, fallNumberId])
+}
+
+model PracticeQuestionExplaination {
+  questionId Int              @unique
+  text       String
+  attachment Json?
+  Question   PracticeQuestion @relation(fields: [questionId], references: [id])
+}
+
+model PracticeOption {
+  id           Int                          @id @default(autoincrement())
+  answer       String
+  attachment   Json?
+  questionId   Int
+  Question     PracticeQuestion             @relation(fields: [questionId], references: [id])
+  RightOption  PracticeRightOption?
+  UserAnswer   UserPracticeAnswer[]
+  Explaination PracticeOptionExplaination[]
+}
+
+model PracticeOptionExplaination {
+  optionId   Int            @unique
+  text       String
+  attachment Json?
+  Option     PracticeOption @relation(fields: [optionId], references: [id])
+}
+
+model PracticeRightOption {
+  optionId Int            @unique
+  Option   PracticeOption @relation(fields: [optionId], references: [id])
+}
+
+model ExcludeFromService {
+  id           Int           @id @default(autoincrement())
+  excludedFrom String
+  subjectId    Int
+  Subject      CourseSubject @relation(fields: [subjectId], references: [id])
+}
+
+model LectureInfo {
+  id             Int               @id @default(autoincrement())
+  name           String
+  remarks        String
+  contentCovered String
+  Video          LectureToVideo[]
+  Course         LectureToCourse[]
+}
+
+model LectureToCourse {
+  id        Int         @id @default(autoincrement())
+  lectureId Int
+  courseId  Int
+  Lecture   LectureInfo @relation(fields: [lectureId], references: [id])
+  Course    Course      @relation(fields: [courseId], references: [id])
+}
+
+model VideoInfo {
+  id           Int                       @id @default(autoincrement())
+  videoCode    String?
+  duration     Int?
+  videoUrl     String?
+  hashCode     String?
+  type         String?
+  createdAt    DateTime                  @default(now())
+  updatedAt    DateTime                  @updatedAt
+  Lecture      LectureToVideo[]
+  UserFlag     UserToVideoInfoFlag[]
+  UserFeedback UserToVideoInfoFeedback[]
+  User         UserToVideoInfo[]
+  FallNumber   FallNumberToVideoInfo[]
+}
+
+model FallNumberToVideoInfo {
+  fallNumberId Int
+  videoId      Int
+  FallNumber   FallNumber @relation(fields: [fallNumberId], references: [id])
+  VideoInfo    VideoInfo  @relation(fields: [videoId], references: [id])
+
+  @@id([fallNumberId, videoId])
+}
+
+model UserToVideoInfo {
+  userId    Int
+  videoId   Int
+  allocated Int?
+  seen      Int?
+  done      Boolean?
+  VideoInfo VideoInfo @relation(fields: [videoId], references: [id])
+  User      User      @relation(fields: [userId], references: [id])
+
+  @@id([userId, videoId])
+}
+
+model UserToVideoInfoFlag {
+  userId    Int
+  videoId   Int
+  flagText  String
+  VideoInfo VideoInfo @relation(fields: [videoId], references: [id])
+  User      User      @relation(fields: [userId], references: [id])
+
+  @@id([userId, videoId])
+}
+
+model UserToVideoInfoFeedback {
+  userId       Int
+  videoId      Int
+  feedbackText String
+  done         Boolean?
+  VideoInfo    VideoInfo @relation(fields: [videoId], references: [id])
+  User         User      @relation(fields: [userId], references: [id])
+
+  @@id([userId, videoId])
+}
+
+model LectureToVideo {
+  id        Int         @id @default(autoincrement())
+  lectureId Int
+  videoId   Int
+  Lecture   LectureInfo @relation(fields: [lectureId], references: [id])
+  Video     VideoInfo   @relation(fields: [videoId], references: [id])
+}
+
+model Formula {
+  id           Int                            @id @default(autoincrement())
+  question     String
+  answer       String
+  Explaination FormulaExplainationToFormula[]
+  FallNumber   FormulaToFallNumber[]
+}
+
+model FormulaToFallNumber {
+  formulaId  Int
+  fallId     Int
+  Formula    Formula    @relation(fields: [formulaId], references: [id])
+  FallNumber FallNumber @relation(fields: [fallId], references: [id])
+
+  @@id([formulaId, fallId])
+}
+
+model FormulaExplaination {
+  id               Int                            @id @default(autoincrement())
+  explainationText String
+  footnote         String
+  Formula          FormulaExplainationToFormula[]
+  Course           FormulaExplainationToCourse[]
+}
+
+model FormulaExplainationToFormula {
+  id             Int                 @id @default(autoincrement())
+  explainationId Int
+  formulaId      Int
+  Explaination   FormulaExplaination @relation(fields: [explainationId], references: [id])
+  Formula        Formula             @relation(fields: [formulaId], references: [id])
+}
+
+model FormulaExplainationToCourse {
+  id             Int                 @id @default(autoincrement())
+  explainationId Int
+  courseId       Int
+  Explaination   FormulaExplaination @relation(fields: [explainationId], references: [id])
+  Course         Course              @relation(fields: [courseId], references: [id])
+}
+
+model DoubtQuestionToPracticeQuestion {
+  practiceId       Int
+  doubtId          Int              @unique
+  PracticeQuestion PracticeQuestion @relation(fields: [practiceId], references: [id])
+  DoubtQuestion    DoubtQuestion    @relation(fields: [doubtId], references: [id])
+
+  @@id([practiceId, doubtId])
+}
+
+model DoubtQuestion {
+  id               Int                              @id @default(autoincrement())
+  questionText     String
+  attachments      Json?
+  fallNumber       Int?
+  isActive         Boolean?
+  userId           Int?
+  sourceId         Int?
+  employeeId       Int?
+  likeCount        Int?
+  dislikeCount     Int?
+  createdAt        DateTime                         @default(now())
+  updatedAt        DateTime                         @updatedAt
+  Answers          DoubtAnswer[]
+  User             User?                            @relation(fields: [userId], references: [id])
+  Views            DoubtQuestionView[]
+  PracticeQuestion DoubtQuestionToPracticeQuestion?
+  Pinned           DoubtForumPin[]
+  Likes            DoubtQuestionLike[]
+  Report           DoubtQuestionReport[]
+  FallNumber       FallNumber?                      @relation(fields: [fallNumber], references: [id])
+  Employee         Employee?                        @relation(fields: [employeeId], references: [id])
+  Source           DoubtForumSource?                @relation(fields: [sourceId], references: [id])
+}
+
+model DoubtForumSource {
+  id       Int             @id @default(autoincrement())
+  name     String
+  Question DoubtQuestion[]
+  courseId Int?
+  Course   Course?         @relation(fields: [courseId], references: [id])
+}
+
+model DoubtForumPin {
+  questionId Int
+  userId     Int
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+  User       User          @relation(fields: [userId], references: [id])
+  DoubtForum DoubtQuestion @relation(fields: [questionId], references: [id])
+
+  @@id([questionId, userId])
+}
+
+model DoubtQuestionReport {
+  questionId Int
+  userId     Int
+  reason     String
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+  User       User          @relation(fields: [userId], references: [id])
+  Question   DoubtQuestion @relation(fields: [questionId], references: [id])
+
+  @@id([userId, questionId])
+}
+
+model DoubtQuestionView {
+  userId     Int
+  questionId Int
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+  User       User          @relation(fields: [userId], references: [id])
+  Question   DoubtQuestion @relation(fields: [questionId], references: [id])
+
+  @@id([userId, questionId])
+}
+
+model DoubtQuestionLike {
+  userId     Int
+  questionId Int
+  liked      Boolean?
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+  User       User          @relation(fields: [userId], references: [id])
+  Question   DoubtQuestion @relation(fields: [questionId], references: [id])
+
+  @@id([userId, questionId])
+}
+
+model DoubtAnswer {
+  id           Int                 @id @default(autoincrement())
+  answerText   String
+  isActive     Boolean?
+  attachments  Json?
+  likeCount    Int?
+  dislikeCount Int?
+  userId       Int
+  questionId   Int
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+  Question     DoubtQuestion       @relation(fields: [questionId], references: [id])
+  User         User                @relation(fields: [userId], references: [id])
+  Likes        DoubtAnswerLike[]
+  Report       DoubtAnswerReport[]
+}
+
+model DoubtAnswerLike {
+  answerId  Int
+  userId    Int
+  liked     Boolean?
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  Answer    DoubtAnswer @relation(fields: [answerId], references: [id])
+  User      User        @relation(fields: [userId], references: [id])
+
+  @@id([answerId, userId])
+}
+
+model DoubtAnswerReport {
+  answerId  Int
+  userId    Int
+  reason    String
+  tags      Json?
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  Answer    DoubtAnswer @relation(fields: [answerId], references: [id])
+  User      User        @relation(fields: [userId], references: [id])
+
+  @@id([answerId, userId])
+}
+
+model ExtraOption {
+  id                 Int                  @id @default(autoincrement())
+  name               String
+  required           Boolean
+  description        String?
+  optionId           Int?
+  courseId           Int?
+  productId          Int?
+  price              Decimal?
+  isDeliverable      Boolean?
+  Course             Course?              @relation(fields: [courseId], references: [id])
+  Option             ExtraOption?         @relation("CourseOptionToCourseOptions", fields: [optionId], references: [id])
+  Options            ExtraOption[]        @relation("CourseOptionToCourseOptions")
+  Product            Product?             @relation(fields: [productId], references: [id])
+  ExtraOptionsToCart ExtraOptionsToCart[]
+}
+
+model Company {
+  id      Int     @id @default(autoincrement())
+  name    String
+  gst     String?
+  address String?
+  state   String?
+  city    String?
+  country String?
+}
+
+model ExtraOptionsToCart {
+  id            Int         @id @default(autoincrement())
+  cartId        Int
+  extraOptionId Int
+  Cart          UserCart    @relation(fields: [cartId], references: [id])
+  ExtraOption   ExtraOption @relation(fields: [extraOptionId], references: [id])
+}
+
+model PackageInfo {
+  id        Int      @id @default(autoincrement())
+  height    Int
+  width     Int
+  length    Int
+  weight    Int
+  courseId  Int?
+  productId Int?
+  Course    Course?  @relation(fields: [courseId], references: [id])
+  Product   Product? @relation(fields: [productId], references: [id])
+}
+
+model PackageDeliveryCharge {
+  id          Int      @id @default(autoincrement())
+  courseId    Int?
+  productId   Int?
+  cityId      Int?
+  continentId Int?
+  countryId   Int?
+  stateId     Int?
+  charge      Int
+  Course      Course?  @relation(fields: [courseId], references: [id])
+  Product     Product? @relation(fields: [productId], references: [id])
+}
+
+model BannedLocation {
+  id              Int      @id @default(autoincrement())
+  continentId     Int?
+  countryId       Int?
+  stateId         Int?
+  cityId          Int?
+  courseId        Int?
+  productId       Int?
+  reductionCharge Int?
+  message         String?
+  Course          Course?  @relation(fields: [courseId], references: [id])
+  Product         Product? @relation(fields: [productId], references: [id])
+}
+
+model Product {
+  id              Int                                @id @default(autoincrement())
+  productId       Int?
+  name            String
+  abbr            String?
+  isActive        Boolean?
+  includeParent   Boolean?
+  order           Int?
+  Meta            ProductMeta[]
+  Options         ProductOption[]
+  BannedLocation  BannedLocation[]
+  ExtraOption     ExtraOption[]
+  DeliveryCharge  PackageDeliveryCharge[]
+  Product         Product?                           @relation("ProductNdProducts", fields: [productId], references: [id])
+  Products        Product[]                          @relation("ProductNdProducts")
+  Cart            UserCart[]
+  UserContactForm UserContactFormToProductNdCourse[]
+  PackageInfo     PackageInfo[]
+  Platform        PlatformToProduct[]
+  Leads           UserLeadToCourseNdProduct[]
+}
+
+model ProductMeta {
+  id               Int      @id @default(autoincrement())
+  productLogo      String?
+  longDescription  String?
+  shortDescription String?
+  productId        Int
+  price            Decimal?
+  purchasable      Boolean?
+  Product          Product  @relation(fields: [productId], references: [id])
+}
+
+model ProductOption {
+  id        Int     @id @default(autoincrement())
+  key       String
+  valueJson Json?
+  productId Int
+  type      String?
+  valueText String?
+  Product   Product @relation(fields: [productId], references: [id])
+}
+
+model PlatformToProduct {
+  platformId Int
+  productId  Int
+  Product    Product  @relation(fields: [productId], references: [id])
+  Platform   Platform @relation(fields: [platformId], references: [id])
+
+  @@id([platformId, productId])
+}
+
+model Events {
+  id               Int                        @id @default(autoincrement())
+  title            String
+  description      String?
+  startDate        DateTime?
+  endDate          DateTime?
+  color            String?
+  eventLogo        String?
+  link             String?
+  type             String?
+  CourseNdPlatform EventsToCourseNdPlatform[]
+  Meta             EventsMeta?
+  Options          EventsOptions[]
+  User             EventToUser[]
+  Gallery          EventToGallery[]
+  Location         EventLocation[]
+}
+
+model EventLocation {
+  id          Int           @id @default(autoincrement())
+  name        String
+  address     String?
+  city        String?
+  state       String?
+  country     String?
+  pincode     String?
+  mode        String?
+  addressLink String?
+  eventId     Int
+  Events      Events        @relation(fields: [eventId], references: [id])
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  User        EventToUser[]
+}
+
+model EventsMeta {
+  id               Int       @id @default(autoincrement())
+  eventId          Int       @unique
+  longDescription  String?
+  shortDescription String?
+  startDate        DateTime?
+  endDate          DateTime?
+  Events           Events    @relation(fields: [eventId], references: [id])
+}
+
+model EventsOptions {
+  id        Int     @id @default(autoincrement())
+  key       String
+  valueJson Json?
+  eventId   Int
+  type      String?
+  valueText String?
+  Events    Events  @relation(fields: [eventId], references: [id])
+}
+
+model EventToUser {
+  id           Int            @id @default(autoincrement())
+  fname        String?
+  lname        String?
+  email        String?
+  countryCode  String?
+  phone        String?
+  responseJson Json?
+  locationId   Int?
+  eventId      Int
+  userId       Int?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  location     EventLocation? @relation(fields: [locationId], references: [id])
+  User         User?          @relation(fields: [userId], references: [id])
+  Events       Events         @relation(fields: [eventId], references: [id])
+}
+
+model EventsToCourseNdPlatform {
+  id         Int       @id @default(autoincrement())
+  eventId    Int
+  platformId Int?
+  courseId   Int?
+  Course     Course?   @relation(fields: [courseId], references: [id])
+  Events     Events    @relation(fields: [eventId], references: [id])
+  Platform   Platform? @relation(fields: [platformId], references: [id])
+}
+
+model Platform {
+  id              Int                                 @id @default(autoincrement())
+  name            String
+  origin          String?
+  description     String
+  logo            String
+  type            String?
+  auth            String?
+  version         String?
+  Events          EventsToCourseNdPlatform[]
+  Faq             FaqToCourseNdPlatform[]
+  PaymentMode     PaymentGatwaysToPlatform[]
+  Options         PlatformOptions[]
+  Templates       PlatformTemplate[]
+  Course          PlatformToCourse[]
+  UserPayments    UserPayments[]
+  UserToken       UserRefreshToken[]
+  User            UserToPlatform[]
+  Testimonials    UserTestimonialToCoursendPlatform[]
+  UserContactForm UserContactForm[]
+  Products        PlatformToProduct[]
+  UserDevices     UserDevice[]
+  Leads           UserLead[]
+  Quiz            QuizToPlatformNdCourse[]
+  QuizAttempt     UserQuizAttempt[]
+  QuizTemplate    QuizTemplate[]
+  CourseTemplate  CourseTemplate[]
+  // Blog            BlogToPlatform[]
+}
+
+model UserDevice {
+  id          Int                 @id @default(autoincrement())
+  name        String?
+  deviceId    String?
+  deviceModel String?
+  deviceOS    String?
+  platformId  Int
+  Platform    Platform            @relation(fields: [platformId], references: [id])
+  User        UserToDevice[]
+  UserHistory UserDeviceHistory[]
+}
+
+model UserToDevice {
+  userId     Int
+  deviceId   Int
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  User       User       @relation(fields: [userId], references: [id])
+  UserDevice UserDevice @relation(fields: [deviceId], references: [id])
+  isAllowed  Boolean?
+
+  @@id([userId, deviceId])
+}
+
+model UserDeviceHistory {
+  id         Int        @id @default(autoincrement())
+  userId     Int
+  deviceId   Int
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  User       User       @relation(fields: [userId], references: [id])
+  UserDevice UserDevice @relation(fields: [deviceId], references: [id])
+}
+
+model PlatformTemplate {
+  id          Int      @id @default(autoincrement())
+  name        String
+  templateId  String
+  platformId  Int
+  senderEmail String?
+  senderName  String?
+  Platform    Platform @relation(fields: [platformId], references: [id])
+}
+
+model PlatformOptions {
+  id         Int      @id @default(autoincrement())
+  key        String
+  valueJson  Json?
+  platformId Int
+  type       String?
+  valueText  String?
+  isActive   Boolean?
+  Platform   Platform @relation(fields: [platformId], references: [id])
+}
+
+model UserToPlatform {
+  userId     Int      @unique
+  platformId Int
+  Platform   Platform @relation(fields: [platformId], references: [id])
+  User       User     @relation(fields: [userId], references: [id])
+
+  @@id([userId, platformId])
+}
+
+model PlatformToCourse {
+  platformId Int
+  courseId   Int
+  Course     Course   @relation(fields: [courseId], references: [id])
+  Platform   Platform @relation(fields: [platformId], references: [id])
+
+  @@id([platformId, courseId])
+}
+
+model FaqSubject {
+  id               Int                     @id @default(autoincrement())
+  heading          String?
+  description      String?
+  logo             String?
+  faqSubjectId     Int?
+  order            Int?
+  Content          FaqContent[]
+  Questions        FaqQuestion[]
+  Subject          FaqSubject?             @relation("FaqSubjectToSubject", fields: [faqSubjectId], references: [id])
+  Subjects         FaqSubject[]            @relation("FaqSubjectToSubject")
+  PlatformNdCourse FaqToCourseNdPlatform[]
+}
+
+model FaqContent {
+  id                 Int        @id @default(autoincrement())
+  name               String
+  description        String?
+  type               String
+  link               String?
+  videoLink          String?
+  subjectId          Int
+  protectedLink      String?
+  protectedVideoLink String?
+  thumbnail          String?
+  Subject            FaqSubject @relation(fields: [subjectId], references: [id])
+}
+
+model FaqQuestion {
+  id        Int        @id @default(autoincrement())
+  question  String
+  answer    String
+  subjectId Int
+  order     Int?
+  Subjects  FaqSubject @relation(fields: [subjectId], references: [id])
+}
+
+model FaqToCourseNdPlatform {
+  id           Int        @id @default(autoincrement())
+  faqSubjectId Int
+  platformId   Int?
+  courseId     Int?
+  Course       Course?    @relation(fields: [courseId], references: [id])
+  FaqSubject   FaqSubject @relation(fields: [faqSubjectId], references: [id])
+  Platform     Platform?  @relation(fields: [platformId], references: [id])
+}
+
+model Employee {
+  id               Int                                 @id @default(autoincrement())
+  fname            String
+  lname            String
+  email            String
+  password         String
+  profile          String?
+  isActive         Boolean?
+  createdAt        DateTime                            @default(now())
+  updatedAt        DateTime                            @updatedAt
+  Work             EmployeeWork[]
+  UserHistory      UserMetaHistory[]
+  Devices          EmployeeToDevice[]
+  Attandence       EmployeeAttandence[]
+  Permissions      EmployeeToEmployeePermission[]
+  PermissionGroups EmployeePermissionGroupToEmployee[]
+  Personal         EmployeePersonal[]
+  OldDetails       OldEmployeeDetail[]
+  DoubtQuestion    DoubtQuestion[]
+  UpperEmployee    EmployeeToEmployee[]
+  LowerEmployee    EmployeeToEmployee[]                @relation("EmployeeToEmployee")
+  LeadInteraction  UserLeadInteraction[]
+  LeadSource       EmployeeToLeadSource[]
+  UserLead         UserLead[]
+  UserLeadHistory  UserLeadHistory[]
+  Number           EmployeeToNumber[]
+}
+
+model EmployeePersonal {
+  id                  Int       @id @default(autoincrement())
+  email               String?
+  phone               String?
+  countryCode         String?
+  Birth               DateTime?
+  maritalStatus       String?
+  whatsapp            String?
+  whatsappCountryCode String?
+  qualification       String?
+  city                String?
+  state               String?
+  country             String?
+  pincode             String?
+  bankAccount         String?
+  bankHolderName      String?
+  bankIFSCCode        String?
+  bankName            String?
+  bankBranch          String?
+  join                DateTime?
+  end                 DateTime?
+  education           Json?
+  government          Json?
+  emergencyNumber     String?
+  EmergencyContact    String?
+  EmergencyRelation   String?
+  employeeId          Int
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt()
+  Employee            Employee  @relation(fields: [employeeId], references: [id])
+}
+
+model EmployeeToEmployee {
+  upperEmployeeId Int
+  lowerEmployeeId Int
+  order           Int?
+  createdAt       DateTime
+  updatedAt       DateTime
+  Employee        Employee @relation(fields: [upperEmployeeId], references: [id])
+  Employee_1      Employee @relation("EmployeeToEmployee", fields: [lowerEmployeeId], references: [id])
+
+  @@id([upperEmployeeId, lowerEmployeeId])
+}
+
+model EmployeeWork {
+  id           Int      @id @default(autoincrement())
+  team         String?
+  designation  String?
+  company      String?
+  numberForOTP String?
+  employeeId   Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  Employee     Employee @relation(fields: [employeeId], references: [id])
+}
+
+model OldEmployeeDetail {
+  id         Int      @id @default(autoincrement())
+  oldField   String
+  oldValue   String
+  employeeId Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  Employee   Employee @relation(fields: [employeeId], references: [id])
+}
+
+model EmployeeDevices {
+  id         Int                  @id @default(autoincrement())
+  name       String?
+  deviceId   String?
+  type       String?
+  isAllowed  Boolean?
+  Employee   EmployeeToDevice[]
+  Attandence EmployeeAttandence[]
+}
+
+model EmployeeToDevice {
+  employeeId     Int
+  deviceId       Int
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  Employee       Employee        @relation(fields: [employeeId], references: [id])
+  EmployeeDevice EmployeeDevices @relation(fields: [deviceId], references: [id])
+  isAllowed      Boolean?
+
+  @@id([employeeId, deviceId])
+}
+
+model EmployeeAttandence {
+  id         Int                       @id @default(autoincrement())
+  employeeId Int
+  deviceId   Int
+  checkIn    DateTime                  @default(now())
+  checkOut   DateTime?
+  createdAt  DateTime                  @default(now())
+  updatedAt  DateTime                  @updatedAt
+  Employee   Employee                  @relation(fields: [employeeId], references: [id])
+  Device     EmployeeDevices           @relation(fields: [deviceId], references: [id])
+  Breaks     EmployeeAttandenceBreak[]
+}
+
+model EmployeeAttandenceBreak {
+  id           Int                @id @default(autoincrement())
+  attandenceId Int
+  breakStart   DateTime           @default(now())
+  breakEnd     DateTime?
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+  Employee     EmployeeAttandence @relation(fields: [attandenceId], references: [id])
+}
+
+model EmployeePermission {
+  id           Int                                           @id @default(autoincrement())
+  name         String?
+  permissionId Int?
+  Permission   EmployeePermission?                           @relation("EmployeePermissionToEmployeePermission", fields: [permissionId], references: [id])
+  Permissions  EmployeePermission[]                          @relation("EmployeePermissionToEmployeePermission")
+  Employee     EmployeeToEmployeePermission[]
+  Group        EmployeePermissionGroupToEmployeePermission[]
+}
+
+model EmployeeToEmployeePermission {
+  employeeId   Int
+  permissionId Int
+  Employee     Employee           @relation(fields: [employeeId], references: [id])
+  Permission   EmployeePermission @relation(fields: [permissionId], references: [id])
+
+  @@id([employeeId, permissionId])
+}
+
+model EmployeePermissionGroup {
+  id          Int                                           @id @default(autoincrement())
+  name        String
+  Permissions EmployeePermissionGroupToEmployeePermission[]
+  Employees   EmployeePermissionGroupToEmployee[]
+}
+
+model EmployeePermissionGroupToEmployeePermission {
+  id                      Int                     @id @default(autoincrement())
+  permissionGroupId       Int
+  permissionId            Int
+  EmployeePermission      EmployeePermission      @relation(fields: [permissionId], references: [id])
+  EmployeePermissionGroup EmployeePermissionGroup @relation(fields: [permissionGroupId], references: [id])
+}
+
+model EmployeePermissionGroupToEmployee {
+  id                      Int                     @id @default(autoincrement())
+  permissionGroupId       Int
+  employeeId              Int
+  Employee                Employee                @relation(fields: [employeeId], references: [id])
+  EmployeePermissionGroup EmployeePermissionGroup @relation(fields: [permissionGroupId], references: [id])
+}
+
+model UserTestimonials {
+  id               Int                                    @id @default(autoincrement())
+  fname            String?
+  lname            String?
+  profile          String?
+  gender           String?
+  designation      String?
+  review           String?
+  social           Json?
+  userId           Int?
+  User             User?                                  @relation(fields: [userId], references: [id])
+  createdAt        DateTime                               @default(now())
+  updatedAt        DateTime                               @updatedAt
+  Category         UserTestimonialCategoryToTestimonial[]
+  CourseNdPlatform UserTestimonialToCoursendPlatform[]
+}
+
+model UserTestimonialCategory {
+  id            Int                                    @id @default(autoincrement())
+  name          String
+  description   String?
+  testimonialId Int?
+  Category      UserTestimonialCategory?               @relation("TestimonialCategoryToCategory", fields: [testimonialId], references: [id])
+  Categories    UserTestimonialCategory[]              @relation("TestimonialCategoryToCategory")
+  Testimonials  UserTestimonialCategoryToTestimonial[]
+}
+
+model UserTestimonialCategoryToTestimonial {
+  id            Int                     @id @default(autoincrement())
+  categoryId    Int
+  testimonialId Int
+  Category      UserTestimonialCategory @relation(fields: [categoryId], references: [id])
+  Testimonial   UserTestimonials        @relation(fields: [testimonialId], references: [id])
+}
+
+model UserTestimonialToCoursendPlatform {
+  id               Int              @id @default(autoincrement())
+  testimonialId    Int
+  courseId         Int?
+  platformId       Int?
+  slug             String?
+  platformFeatured Boolean?
+  courseFeatured   Boolean?
+  Course           Course?          @relation(fields: [courseId], references: [id])
+  Testimonial      UserTestimonials @relation(fields: [testimonialId], references: [id])
+  Platform         Platform?        @relation(fields: [platformId], references: [id])
+}
+
+model UserContactForm {
+  id               Int                                @id @default(autoincrement())
+  fname            String
+  lname            String
+  appointmentTime  DateTime?
+  message          String?
+  userId           Int?
+  eneteredText     Json?
+  email            String?
+  phone            String?
+  counrtyCode      String?
+  platformId       Int?
+  utms             Json?
+  slug             String?
+  createdAt        DateTime                           @default(now())
+  updatedAt        DateTime                           @updatedAt
+  previousForm     Int?
+  ContactForm      UserContactForm?                   @relation(name: "ContactFormToContactForm", fields: [previousForm], references: [id])
+  CortactForms     UserContactForm[]                  @relation(name: "ContactFormToContactForm")
+  Platform         Platform?                          @relation(fields: [platformId], references: [id])
+  User             User?                              @relation(fields: [userId], references: [id])
+  CourseNdPlatform UserContactFormToProductNdCourse[]
+  LeadActivity     UserLeadActivity[]
+}
+
+model UserContactFormToProductNdCourse {
+  id        Int             @id @default(autoincrement())
+  formId    Int
+  Form      UserContactForm @relation(fields: [formId], references: [id])
+  productId Int?
+  Product   Product?        @relation(fields: [productId], references: [id])
+  courseId  Int?
+  Course    Course?         @relation(fields: [courseId], references: [id])
+}
+
+model EmployeeNumber {
+  id        Int                @id @default(autoincrement())
+  number    String
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+  Employee  EmployeeToNumber[]
+}
+
+model EmployeeToNumber {
+  id         Int            @id @default(autoincrement())
+  employeeId Int
+  numberId   Int
+  Employee   Employee       @relation(fields: [employeeId], references: [id])
+  Number     EmployeeNumber @relation(fields: [numberId], references: [id])
+  startTime  DateTime?
+  endTime    DateTime?
+  createdAt  DateTime       @default(now())
+}
+
+model UserLead {
+  id                  Int                         @id @default(autoincrement())
+  fname               String?
+  lname               String?
+  email               String?
+  phone               String?
+  countryCode         String?
+  status              String?
+  whatsapp            String?
+  whatsappCountryCode String?
+  action              String?
+  city                String?
+  occupation          String?
+  sourceId            Int?
+  priority            Int?
+  platformId          Int?
+  userId              Int?
+  employeeId          Int?
+  User                User?                       @relation(fields: [userId], references: [id])
+  LeadSource          LeadSource?                 @relation(fields: [sourceId], references: [id])
+  createdAt           DateTime                    @default(now())
+  updatedAt           DateTime                    @updatedAt
+  Course              UserLeadToCourseNdProduct[]
+  Platform            Platform?                   @relation(fields: [platformId], references: [id])
+  UserActivity        UserLeadActivity[]
+  Employee            Employee?                   @relation(fields: [employeeId], references: [id])
+  History             UserLeadHistory[]
+}
+
+model UserLeadHistory {
+  id         Int       @id @default(autoincrement())
+  key        String
+  valueJson  Json?
+  valueText  String?
+  leadId     Int
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  Lead       UserLead  @relation(fields: [leadId], references: [id])
+  employeeId Int?
+  Employee   Employee? @relation(fields: [employeeId], references: [id])
+}
+
+model UserLeadActivity {
+  id            Int                  @id @default(autoincrement())
+  leadId        Int
+  userId        Int?
+  cartId        Int?
+  paymentId     Int?
+  contactFormId Int?
+  interactionId Int?
+  User          User?                @relation(fields: [userId], references: [id])
+  Cart          UserCart?            @relation(fields: [cartId], references: [id])
+  Payment       UserPayments?        @relation(fields: [paymentId], references: [id])
+  ContactForm   UserContactForm?     @relation(fields: [contactFormId], references: [id])
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+  Lead          UserLead             @relation(fields: [leadId], references: [id])
+  Interaction   UserLeadInteraction? @relation(fields: [interactionId], references: [id])
+}
+
+model UserLeadToCourseNdProduct {
+  id        Int      @id @default(autoincrement())
+  leadId    Int
+  productId Int?
+  courseId  Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Course    Course?  @relation(fields: [courseId], references: [id])
+  Product   Product? @relation(fields: [productId], references: [id])
+  Lead      UserLead @relation(fields: [leadId], references: [id])
+}
+
+model UserLeadInteraction {
+  id           Int                @id @default(autoincrement())
+  employeeId   Int?
+  callDialTime DateTime?
+  callUpTime   DateTime?
+  callEndTime  DateTime?
+  isConnected  Boolean?
+  isDone       Boolean?
+  mode         String?
+  isIncomming  Boolean?
+  remarks      String?
+  status       String?
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+  Employee     Employee?          @relation(fields: [employeeId], references: [id])
+  LeadActivity UserLeadActivity[]
+}
+
+model LeadSource {
+  id       Int                    @id @default(autoincrement())
+  name     String
+  Leads    UserLead[]
+  Employee EmployeeToLeadSource[]
+}
+
+model EmployeeToLeadSource {
+  id         Int        @id @default(autoincrement())
+  employeeId Int
+  sourceId   Int
+  priority   Int
+  courseId   Int?
+  hierarchy  Int
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  Employee   Employee   @relation(fields: [employeeId], references: [id])
+  Source     LeadSource @relation(fields: [sourceId], references: [id])
+  Course     Course?    @relation(fields: [courseId], references: [id])
+}
+
+// Created
+
+model QuizToUser {
+  quizId    Int
+  userId    Int
+  fieldJson Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  User User @relation(fields: [userId], references: [id])
+  Quiz Quiz @relation(fields: [quizId], references: [id])
+
+  @@id([quizId, userId])
+}
+
+model UserQuizAnswer {
+  id           Int                 @id @default(autoincrement())
+  attemptId    Int
+  questionId   Int
+  optionId     Int?
+  timeTaken    Int?
+  order        Int?
+  difficulty   Int?
+  hasSubmitted Boolean?
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+  Attempt      UserQuizAttempt     @relation(fields: [attemptId], references: [id])
+  Question     QuizQuestion        @relation(fields: [questionId], references: [id])
+  Option       QuizQuestionOption? @relation(fields: [optionId], references: [id])
+}
+
+model UserQuizAttempt {
+  id           Int                @id @default(autoincrement())
+  userId       Int
+  courseId     Int?
+  quizId       Int
+  hasSubmitted Boolean?
+  timeTaken    Int?
+  platFormId   Int
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+  Answers      UserQuizAnswer[]
+  Course       Course?            @relation(fields: [courseId], references: [id])
+  Platform     Platform           @relation(fields: [platFormId], references: [id])
+  Quiz         Quiz               @relation(fields: [quizId], references: [id])
+  User         User               @relation(fields: [userId], references: [id])
+  UserCheating QuizUserCheating[]
+}
+
+model UserQuizQuestionFlag {
+  questionId Int
+  userId     Int
+  flagText   String?
+  createdAt  DateTime     @default(now())
+  removed    Boolean?
+  updatedAt  DateTime     @updatedAt
+  id         Int          @id @default(autoincrement())
+  Question   QuizQuestion @relation(fields: [questionId], references: [id])
+  User       User         @relation(fields: [userId], references: [id])
+}
+
+model QuizQuestionReport {
+  questionId Int
+  userId     Int
+  reason     String?
+  tag        Json?
+  Question   QuizQuestion @relation(fields: [questionId], references: [id])
+  User       User         @relation(fields: [userId], references: [id])
+
+  @@id([userId, questionId])
+}
+
+model QuizQuestiontoFallNumber {
+  questionId   Int
+  fallNumberId Int
+  FallNumber   FallNumber   @relation(fields: [fallNumberId], references: [id])
+  Question     QuizQuestion @relation(fields: [questionId], references: [id])
+
+  @@id([questionId, fallNumberId])
+}
+
+model Gallery {
+  id          Int              @id @default(autoincrement())
+  name        String
+  type        String
+  description String?
+  link        String
+  Events      EventToGallery[]
+}
+
+model EventToGallery {
+  id        Int      @id @default(autoincrement())
+  eventId   Int
+  galleryId Int
+  featured  Boolean?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Event     Events   @relation(fields: [eventId], references: [id])
+  Gallery   Gallery  @relation(fields: [galleryId], references: [id])
+}
+
+model UserForm {
+  id            Int                @id @default(autoincrement())
+  form          Json?
+  isActive      Boolean?
+  name          String
+  description   String?
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  successJson   Json?
+  failJson      Json?
+  successFormId Int?
+  failFormId    Int?
+  User          UserFormToUser[]
+  Course        UserFormToCourse[]
+}
+
+model UserFormToCourse {
+  id       Int      @id @default(autoincrement())
+  courseId Int
+  formId   Int
+  Course   Course   @relation(fields: [courseId], references: [id])
+  Form     UserForm @relation(fields: [formId], references: [id])
+}
+
+model UserFormToUser {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  formId      Int
+  formData    Json?
+  attachment  Json?
+  isSubmitted Boolean?
+  isActive    Boolean?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  User        User     @relation(fields: [userId], references: [id])
+  Form        UserForm @relation(fields: [formId], references: [id])
+}
+
+model EmployeeEmail {
+  id       Int      @id @default(autoincrement())
+  email    String
+  isActive Boolean?
+}
+
+// model Blog {
+//   id          Int              @id @default(autoincrement())
+//   title       String
+//   description String?
+//   content     Json?
+//   logo        String?
+//   type        String?
+//   Platform    BlogToPlatform[]
+//   Course      BlogToCourse[]
+//   Author      BlogToUser[]
+//   Category    BlogToCategory[]
+//   Tags        BlogToTag[]
+//   createdAt   DateTime         @default(now())
+//   updatedAt   DateTime         @updatedAt
+// }
+
+// model BlogToPlatform {
+//   blogId     Int
+//   platformId Int
+//   isFeatured Boolean?
+//   Blog       Blog     @relation(fields: [blogId], references: [id])
+//   Platform   Platform @relation(fields: [platformId], references: [id])
+
+//   @@id([blogId, platformId])
+// }
+
+// model BlogToCourse {
+//   blogId   Int
+//   courseId Int
+//   Blog     Blog   @relation(fields: [blogId], references: [id])
+//   Course   Course @relation(fields: [courseId], references: [id])
+
+//   @@id([blogId, courseId])
+// }
+
+// model BlogToUser {
+//   blogId Int
+//   userId Int
+//   Blog   Blog @relation(fields: [blogId], references: [id])
+//   User   User @relation(fields: [userId], references: [id])
+
+//   @@id([blogId, userId])
+// }
+
+// model BlogToCategory {
+//   blogId     Int
+//   categoryId Int
+//   Blog       Blog         @relation(fields: [blogId], references: [id])
+//   Category   BlogCategory @relation(fields: [categoryId], references: [id])
+
+//   @@id([blogId, categoryId])
+// }
+
+// model BlogCategory {
+//   id          Int     @id @default(autoincrement())
+//   name        String
+//   description String?
+//   logo        String?
+//   order       Int?
+
+//   Blogs BlogToCategory[]
+// }
+
+// model BlogTag {
+//   id          Int         @id @default(autoincrement())
+//   name        String
+//   description String?
+//   logo        String?
+//   order       Int?
+//   Blogs       BlogToTag[]
+// }
+
+// model BlogToTag {
+//   blogId Int
+//   tagId  Int
+//   Blog   Blog    @relation(fields: [blogId], references: [id])
+//   Tag    BlogTag @relation(fields: [tagId], references: [id])
+
+//   @@id([blogId, tagId])
+// }

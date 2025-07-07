@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "PlatformOptions" ALTER COLUMN "valueJson" DROP NOT NULL,
+ALTER COLUMN "type" DROP NOT NULL,
+ALTER COLUMN "valueText" DROP NOT NULL;

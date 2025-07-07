@@ -1,0 +1,361 @@
+platformPermission: - 
+    canUseDoubtForum
+    canUsePractice
+    hasCourse
+    canUseLectureGuide
+    isDevice
+
+user: - 
+    courses_${user.id}_${platformId}
+
+
+practiceQuestion: -
+    question MaxCount - 50
+
+coursePermission: -
+    isCourse
+    isChildCourseAllowed
+
+todo: -  
+    socket with platformPermission.
+    doubtforum with Image Upload and stuff.
+    autoenrollment Mail.
+    userToCourseAfterEnroll. - done.
+    Migrate Users.
+
+
+
+Growth Manager: -
+
+    canViewPermission: - 
+        canGivePermission: -   
+      
+    canViewSelf : - 
+        canViewProfile
+        canViewLoginDates
+
+    canViewEmployee
+        canAddEmployee
+        canEditEmployee
+        canDisableEmployee
+
+    canViewAccount
+        - orderid
+        - razorpay
+        - amount
+        - products
+        - courses 
+            - extraOptions
+        - fname 
+        - lname
+        - billing 
+            - state 
+            - country
+        - shipping 
+            - state
+            - country  
+            - companyDetails
+        - canDownoadInvoice
+        canAcceptManual 
+            canAlterAmount
+            canViewHistory
+            canEditStudentManualEntry
+            canRemoveFromShipwayManual
+            canSeeSettlementAmount
+
+        canSeeEmployeeAttendance
+            canCalculateSalary
+            canApproveRefund
+            canRaisePaymentDispute
+
+    canViewTech
+        canViewDevice
+            canAllowDevice
+            canAllowEmployee
+            canOpenUSB
+            canDeleteEmployeeToDevice
+            canDeleteDevice
+        canViewPlatform
+            canEditPlatform
+            canEditPlatFormPaymentMethod
+            canEditPlatFormPermission
+            canEditPlatFormJsons
+        canViewCourse
+            canCreateCourse
+            canChangeCourseOrder
+            canAddPlatFormToCourse
+
+
+    canViewStudentData
+        canViewNewSignup
+        canViewAllSources
+        canAllotStudentToEmployee
+        canStudentBeAllotedToCall
+        canViewStudentCallHistory
+        canViewEnrolled 
+        canCallToAllotedStudent
+        canScheduleCall
+        canRescheduleCall
+        canAllotCallToOther
+        canAddTagsToCall
+        canAddRemarks
+        canAddFilter
+        canFollowUp
+        canAddFollowUpRemarks
+        canSendWhatsApp
+        canSendMail
+        canSeeStudentMessage
+        canResolvePaymentDispute
+        canAddIncomingStudent
+
+
+         <!-- Registered Desk -->
+            canRequestRefund
+            
+
+         <!-- Onboarding Desk -->
+            canEditAddress
+            canOnboardStudent            
+            canRaiseShippingDispute
+            canAddRemarks
+            canHandleAdditionalDispatch
+
+
+
+         <!-- Tech Desk -->
+            canViewExpiry
+            canAddExtraExpiry
+            canChangeBatch
+            canViewDevice
+            canRefreshDevice
+            canChangeDevice
+            canPauseCourse
+            canBlockUser
+
+
+     <!-- Marketing Team -->
+    canViewMarketing
+        canSeeActiveCampaigns
+            canSeeUsersFromThatCampaign
+            canSeeTagsPlacedInTheUsersFromThatCampaign
+            canSeeConvertedLeadsFromEachCampaign
+            canSeeFollowUpAmountAndEmployeeUserRemarks
+        canSeePR
+            canAddEvent
+            canChangeEvent
+            canRemoveEvent
+            canViewAttendeeCount
+            canViewResponse
+            
+
+
+     <!-- Content Team -->
+    canViewContent
+        canViewSpecificCourse
+            canAddCourse
+            canAlterCourse
+        canViewSubject
+            canEditSubject
+            canAddSubject
+            canEditSubjectPosition
+        canViewSpecificDoubtForum
+            canAddLike
+            canAddAnswer
+            canAddLinkToLectureGuide
+
+
+
+meeting: - 
+blue underline in black forground : -
+
+
+
+
+discussion forum: - 
+categories : - 
+    (icon) - subcategories(categories child)
+    dynamic categories () : - 
+    trending : - 
+    course wise : - 
+    latest: - 
+    recommended for you (by course, by interaction): - 
+    start a discussion : - 
+    sort by filters() : - 
+    like tracking : - 
+
+    treads filters: - 
+    Latest ()
+    Following () 
+
+
+    - search sub category: - 
+
+
+    - link 
+        - parent control.
+        - 
+
+    - reply by like
+        - users can pin comment.
+        - employee can pin as well.
+    
+
+- practice analytics
+
+
+ - prerequisits. for enrollment.
+ 
+
+
+Performance Tracker : - 
+
+    start when to register: - 
+        - lecture guide schedule 
+
+
+        study mode : - 
+            default : - 
+            schedule mode : - 
+            
+        select study chapter
+            - chapter summary
+            - expected time.
+            - importance level
+            - 
+        analytics : - 
+            progress : -
+                - 
+
+            - student roadmap: - 
+                target, real, average - 
+                    percentage wise days 
+            - practice hours : 
+                - study time change : - 
+                    based - on study and date 
+                     - reduce time.
+                     - milestones - 
+                     lecture duration - * 1.7 = total hours.
+
+                     percentage 
+                        video duration latest
+                        completion ratio,
+
+
+    subject wise - 
+        performance analytics.
+
+    register email
+
+
+             pre requesites gray
+
+
+             
+
+    - 14 day trial for passed students
+             
+
+
+    studyvity = 
+        in the card in the studyvity
+            doubt forum 
+            and other tabs
+        header hover showing courses.
+
+    mockup clickable for why use.
+    limits in selecting course when signing up?
+    signup enroll 
+
+
+    in navabar
+       material
+       practice
+       forum
+       resources
+        mindmap
+        resources.
+
+        or
+
+        material
+        community
+        forumula.
+
+
+        study 
+            - material
+            - mindmap 
+
+            -forumula
+        productivity 
+            - calendar
+            - dashboard
+        community
+            - doubtforum
+            - discussionForum
+            - studybuddy
+            
+
+            - delay in cart 
+               - update value.
+
+            FollowUp Flow
+
+            accounts.aswinibajaj.com
+
+    1. after call 
+       if recieve - interested. - popup messages.
+                                       - Hi, Student Name, This is {employee Name}, as discussed, Providing you the course details.
+                                       - common introduction message.
+                                           - poster,
+                                           - course based.
+
+
+
+                                            - next day message.
+                                            whatsapp new call,
+                                            - next follow up where to show up.
+
+                                        - partially interested 
+                                            - hi, man badla kya? - frequency -  3 din.
+                                        - 
+
+                                        - call back later - no follow up.
+                                                                    - date time.
+                                                                    - schedule call. - to call.
+                                        - no enquiry - 
+                                                no follow up 
+                                                no message up - before harkat.
+                                        - dead lead - 
+                                                    call back later part two
+                                                    - schedule for lead.
+                                                    - if no reschedule 
+                                                    - schedule is secondary and harkat is primary.
+                                        - junk fake - 
+                                            nothing harkat wapas.
+                                        -  DND - 
+                                            - no follow up
+                                            - no harkat - only contact us or schedule a call.
+
+
+
+        student community relation
+            - 
+
+            Alumni 
+                - Profile
+                - whatsapp group
+                - remove all old whatsapp group
+                - alumni wise whatsapp group.
+                - study partner for whatsapp.
+                - course wise different alumni.
+                - profile changes.
+                - past profile data.
+                - zoom sdk.
+                - discussion forum.
+                - current profile group and past groups. - and interested profile group.
+            
+
+            HR. 
+                - micheal page - company for HR.
+                - Law Seekho.
