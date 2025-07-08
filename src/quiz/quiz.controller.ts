@@ -37,7 +37,6 @@ export class QuizController {
   }
 
   // new just create quiz only
-  // needs to add here also
   @UseGuards(CheckAuthGuard)
   @Post()
   addQuiz(
