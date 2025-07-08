@@ -21,7 +21,7 @@ import { QuizUserRegisterDto } from './dto/quiz-user-register.dto';
 import { GetQuizOptionDto } from './dto/get-quiz-option.dto';
 import { AddQuizFeedbackDto } from './dto/add-quiz-feedback.dto';
 import { CreateQuizDto } from './dto/add-quiz-dto';
-import { QuizLinkCourseDto } from './dto/quiz-link-course.dto';
+import { QuizToPlatformNdCourseDto } from './dto/quiz-link-course.dto';
 
 @Controller('quiz')
 export class QuizController {
@@ -54,7 +54,7 @@ export class QuizController {
   addQuizPlatform(
     @Request() req: CustomRequest,
     @Body(new ValidationPipe({ transform: true }))
-    quizLinkCourseDto: QuizLinkCourseDto,
+    quizLinkCourseDto: QuizToPlatformNdCourseDto,
   ) {
     return this.quizService.quizToPlatForm(req.platformid, quizLinkCourseDto);
   }

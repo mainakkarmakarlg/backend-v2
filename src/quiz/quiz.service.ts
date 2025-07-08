@@ -26,7 +26,7 @@ import { HttpService } from '@nestjs/axios';
 import { catchError } from 'rxjs';
 import { AxiosError } from 'axios';
 import { CreateQuizDto } from './dto/add-quiz-dto';
-import { QuizLinkCourseDto } from './dto/quiz-link-course.dto';
+import { QuizToPlatformNdCourseDto } from './dto/quiz-link-course.dto';
 
 @Injectable()
 export class QuizService {
@@ -3261,7 +3261,7 @@ export class QuizService {
 
   async quizToPlatForm(
     platFormId: number,
-    quizLinkCourseDto: QuizLinkCourseDto,
+    quizLinkCourseDto: QuizToPlatformNdCourseDto,
   ) {
     const pfid = await this.databaseService.quizToPlatformNdCourse.findFirst({
       where: {

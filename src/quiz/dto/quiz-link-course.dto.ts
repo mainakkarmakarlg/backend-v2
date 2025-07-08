@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber, IsOptional, IsString } from 'class-validator';
 
-export class QuizLinkCourseDto {
+export class QuizToPlatformNdCourseDto {
   @ApiProperty()
   @IsNumber()
   quizId: number;
