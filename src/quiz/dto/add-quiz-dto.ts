@@ -52,13 +52,11 @@ export class CreateQuizDto {
 
   @ApiProperty()
   @IsOptional()
-  @Transform(({ value }) => new Date(value)) 
   @IsDateString()
   startTime: Date;
 
   @ApiProperty()
   @IsOptional()
-  @Transform(({ value }) => new Date(value))
   @IsDateString()
   endTime: Date;
 
@@ -69,13 +67,11 @@ export class CreateQuizDto {
 
   @ApiProperty()
   @IsOptional()
-  @Transform(({ value }) => new Date(value))
   @IsDateString()
   createdAt: Date;
 
   @ApiProperty()
   @IsOptional()
-  @Transform(({ value }) => new Date(value))
   @IsDateString()
   updatedAt: Date;
 }

@@ -3259,15 +3259,28 @@ export class QuizService {
 
   // new for QuizToPlatformNdCourse
 
-  // async quizToPlatForm(platFormId, quizLinkCourseDto: QuizLinkCourseDto){
-  //   return await this.databaseService.quizToPlatformNdCourse.findFirst({
-  //     const platformId = await this.databaseService.quizLinkCourseDto.findFirst({
-  //     where: {
-  //       platformId: platformId
-  //     },
-  //   })
-  //   })
-  // }
+  async quizToPlatForm(
+    platFormId: number,
+    quizLinkCourseDto: QuizLinkCourseDto,
+  ) {
+    const pfid = await this.databaseService.quizToPlatformNdCourse.findFirst({
+      where: {
+        platformId: platFormId,
+      },
+    });
+    if (pfid) {
+      return this.databaseService.quizToPlatformNdCourse.create({
+        data: {
+          quizId: quizLinkCourseDto.quizId,
+          courseId: quizLinkCourseDto.courseId,
+          platformId: platFormId,
+          interface: quizLinkCourseDto.interface,
+          slug: quizLinkCourseDto.slug,
+        },
+      });
+    }
+    return pfid;
+  }
 }
 
 // if (quizAttemptStartDto.quizId && !quizAttemptStartDto.attemptId) {

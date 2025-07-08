@@ -1,25 +1,19 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsBoolean,
-  IsDateString,
-  IsInt,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class QuizLinkCourseDto {
   @ApiProperty()
-  @IsInt()
+  @IsNumber()
   quizId: number;
 
   @ApiProperty()
   @IsOptional()
-  @IsInt()
+  @IsNumber()
   courseId: number;
 
   @ApiProperty()
   @IsOptional()
-  @IsInt()
+  @IsNumber()
   platformId: number;
 
   @ApiProperty()
@@ -29,6 +23,6 @@ export class QuizLinkCourseDto {
 
   @ApiProperty()
   @IsOptional()
-  @IsInt()
+  @IsString()
   slug: string;
 }
