@@ -3252,19 +3252,41 @@ export class QuizService {
 
   // new for create quiz
   async createQuiz(createQuizDto: CreateQuizDto) {
-    const { CourseNdPlatform, ...createQuizDtoRawData } = createQuizDto;
-    return await this.databaseService.quiz.create({
+    const { CourseNdPlatform, ...quizData } = createQuizDto;
+    // return this.databaseService.quiz.create({
+    //   data: {
+    //     ...quizData,
+    //     CourseNdPlatform: {
+    //       create: CourseNdPlatform,
+    //     },
+    //   },
+    // });
+
+    const createdQuiz = await this.databaseService.quiz.create({
       data: {
-        ...createQuizDtoRawData,
+        ...quizData,
         CourseNdPlatform: {
-          create: CourseNdPlatform,
+          create: CourseNdPlatform.map(({ quizId, ...rest }) => rest),
         },
       },
+      include: {
+        CourseNdPlatform: true,
+      },
     });
+
+    const coursePlatformToLink = createdQuiz.CourseNdPlatform[1];
+
+    const updatedQuiz = await this.databaseService.quiz.update({
+      where: { id: createdQuiz.id },
+      data: {
+        quizId: coursePlatformToLink.id,
+      },
+    });
+
+    return updatedQuiz;
   }
 
   // new for QuizToPlatformNdCourse
-
   async quizToPlatForm(
     platFormId: number,
     quizLinkCourseDto: QuizToPlatformNdCourseDto,
@@ -3457,3 +3479,23 @@ export class QuizService {
 //     message: 'Quiz or attempt not found',
 //   });
 // }
+
+
+/**
+ *  {
+ *  "id": 1,
+ *  "name": "quiz"
+ *  "quizId": 5,
+ *  CourseNdPlatform : [
+ *  {
+ *  "id": 5, this must match the quiz id of parent,
+ * "quizId": 10
+ * },
+ *  "id": 5, this must match the quiz id of parent,
+ * "quizId": 8
+ * },
+ * ]
+ * 
+ * }
+ * 
+ */
