@@ -3251,39 +3251,36 @@ export class QuizService {
   }
 
   // new for create quiz
-  async createQuiz(createQuizDto: CreateQuizDto) {
-    const { CourseNdPlatform, ...quizData } = createQuizDto;
-    // return this.databaseService.quiz.create({
-    //   data: {
-    //     ...quizData,
-    //     CourseNdPlatform: {
-    //       create: CourseNdPlatform,
-    //     },
-    //   },
-    // });
+  async createQuiz(platformId: number, createQuizDto: CreateQuizDto) {
+    const { courseNdPlatform, ...quizData } = createQuizDto;
 
     const createdQuiz = await this.databaseService.quiz.create({
       data: {
         ...quizData,
-        CourseNdPlatform: {
-          create: CourseNdPlatform.map(({ quizId, ...rest }) => rest),
-        },
-      },
-      include: {
-        CourseNdPlatform: true,
       },
     });
 
-    const coursePlatformToLink = createdQuiz.CourseNdPlatform[1];
-
-    const updatedQuiz = await this.databaseService.quiz.update({
-      where: { id: createdQuiz.id },
-      data: {
-        quizId: coursePlatformToLink.id,
-      },
+    const platformExists = await this.databaseService.platform.findUnique({
+      where: { id: platformId },
     });
+    if (!platformExists) {
+      throw new Error('Platform does not exist');
+    }
+    if (courseNdPlatform?.length) {
+      for (const cp of courseNdPlatform) {
+        await this.databaseService.quizToPlatformNdCourse.create({
+          data: {
+            quizId: createdQuiz.id,
+            courseId: cp.courseId,
+            platformId: platformId,
+            interface: cp.interface,
+            slug: cp.slug,
+          },
+        });
+      }
+    }
 
-    return updatedQuiz;
+    return createdQuiz;
   }
 
   // new for QuizToPlatformNdCourse
@@ -3479,23 +3476,3 @@ export class QuizService {
 //     message: 'Quiz or attempt not found',
 //   });
 // }
-
-
-/**
- *  {
- *  "id": 1,
- *  "name": "quiz"
- *  "quizId": 5,
- *  CourseNdPlatform : [
- *  {
- *  "id": 5, this must match the quiz id of parent,
- * "quizId": 10
- * },
- *  "id": 5, this must match the quiz id of parent,
- * "quizId": 8
- * },
- * ]
- * 
- * }
- * 
- */

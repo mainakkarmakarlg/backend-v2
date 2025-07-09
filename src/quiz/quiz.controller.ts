@@ -44,7 +44,7 @@ export class QuizController {
     @Body(new ValidationPipe({ transform: true }))
     createQuizDto: CreateQuizDto,
   ) {
-    return this.quizService.createQuiz(createQuizDto);
+    return this.quizService.createQuiz(req.platformid, createQuizDto);
   }
 
   // create QuizToPlatformNdCourse

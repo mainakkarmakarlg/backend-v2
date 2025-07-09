@@ -7,7 +7,33 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { QuizToPlatformNdCourseDto } from './quiz-link-course.dto';
+
+
+class QuizToPlatformNdCourseDto {
+  @ApiProperty()
+  @IsNumber()
+  quizId: number;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsNumber()
+  courseId: number;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsNumber()
+  platformId: number;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  interface: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  slug: string;
+}
 
 export class CreateQuizDto {
   @ApiProperty()
@@ -77,5 +103,5 @@ export class CreateQuizDto {
 
   @ApiProperty()
   @IsOptional()
-  CourseNdPlatform: QuizToPlatformNdCourseDto[];
+  courseNdPlatform : QuizToPlatformNdCourseDto []
 }
