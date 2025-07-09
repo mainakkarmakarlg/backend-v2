@@ -103,5 +103,5 @@ export class CreateQuizDto {
 
   @ApiProperty()
   @IsOptional()
-  courseNdPlatform : QuizToPlatformNdCourseDto []
+  courseNdPlatform : QuizToPlatformNdCourseDto
 }

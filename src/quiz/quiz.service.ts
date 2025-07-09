@@ -3263,10 +3263,30 @@ export class QuizService {
     const platformExists = await this.databaseService.platform.findUnique({
       where: { id: platformId },
     });
-    if (!platformExists) {
+    if (platformExists) {
+      const platform = await this.databaseService.quizToPlatformNdCourse.create(
+        {
+          data: {
+            courseId: courseNdPlatform.courseId,
+            platformId: platformId,
+            interface: courseNdPlatform.interface,
+            slug: courseNdPlatform.slug,
+            quizId: createdQuiz.id,
+          },
+        },
+      );
+    } else {
       throw new Error('Platform does not exist');
     }
-    if (courseNdPlatform?.length) {
+
+    return createdQuiz;
+  }
+
+  // if multiple field then
+  /**
+   * 
+   * 
+   * if (courseNdPlatform?.length) {
       for (const cp of courseNdPlatform) {
         await this.databaseService.quizToPlatformNdCourse.create({
           data: {
@@ -3280,8 +3300,7 @@ export class QuizService {
       }
     }
 
-    return createdQuiz;
-  }
+   */
 
   // new for QuizToPlatformNdCourse
   async quizToPlatForm(
@@ -3476,3 +3495,22 @@ export class QuizService {
 //     message: 'Quiz or attempt not found',
 //   });
 // }
+
+/**
+ *  {
+ *  "id": 1,
+ *  "name": "quiz"
+ *  "quizId": 5,
+ *  CourseNdPlatform : [
+ *  {
+ *  "id": 5, this must match the quiz id of parent,
+ * "quizId": 10
+ * },
+ *  "id": 5, this must match the quiz id of parent,
+ * "quizId": 8
+ * },
+ * ]
+ *
+ * }
+ *
+ */
