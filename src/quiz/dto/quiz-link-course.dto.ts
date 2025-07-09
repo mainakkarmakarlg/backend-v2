@@ -3,10 +3,6 @@ import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class QuizToPlatformNdCourseDto {
   @ApiProperty()
-  @IsNumber()
-  quizId: number;
-
-  @ApiProperty()
   @IsOptional()
   @IsNumber()
   courseId: number;

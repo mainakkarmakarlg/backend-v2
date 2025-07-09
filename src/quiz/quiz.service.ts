@@ -3250,36 +3250,47 @@ export class QuizService {
     }));
   }
 
-  // new for create quiz
+  // create quiz
   async createQuiz(platformId: number, createQuizDto: CreateQuizDto) {
-    const { courseNdPlatform, ...quizData } = createQuizDto;
-
-    const createdQuiz = await this.databaseService.quiz.create({
+    const quiz = await this.databaseService.quiz.create({
       data: {
-        ...quizData,
+        accessType: createQuizDto.accessType,
+        attemptType: createQuizDto.attemptType,
+        name: createQuizDto.name,
+        resultType: createQuizDto.resultType,
+        timeType: createQuizDto.timeType,
+        duration: createQuizDto.duration,
+        isActive: createQuizDto.isActive,
+        startTime: createQuizDto.startTime,
+        endTime: createQuizDto.endTime,
       },
     });
 
-    const platformExists = await this.databaseService.platform.findUnique({
-      where: { id: platformId },
-    });
-    if (platformExists) {
-      const platform = await this.databaseService.quizToPlatformNdCourse.create(
-        {
-          data: {
-            courseId: courseNdPlatform.courseId,
-            platformId: platformId,
-            interface: courseNdPlatform.interface,
-            slug: courseNdPlatform.slug,
-            quizId: createdQuiz.id,
-          },
+    let meta = null;
+    if (
+      createQuizDto.logo ||
+      createQuizDto.shortDescription ||
+      createQuizDto.longDescription ||
+      createQuizDto.regEndTime ||
+      createQuizDto.regStartTime
+    ) {
+      meta = await this.databaseService.quizMeta.create({
+        data: {
+          quizId: quiz.id,
+          longDescription: createQuizDto.longDescription || null,
+          shortDescription: createQuizDto.shortDescription || null,
+          logo: createQuizDto.logo || null,
+          regStartTime: createQuizDto.regStartTime || null,
+          regEndTime: createQuizDto.regEndTime || null,
         },
-      );
-    } else {
-      throw new Error('Platform does not exist');
+      });
     }
 
-    return createdQuiz;
+    const finalQuiz = {
+      ...quiz,
+      Meta: meta,
+    };
+    return finalQuiz;
   }
 
   // if multiple field then
@@ -3303,28 +3314,28 @@ export class QuizService {
    */
 
   // new for QuizToPlatformNdCourse
-  async quizToPlatForm(
-    platFormId: number,
-    quizLinkCourseDto: QuizToPlatformNdCourseDto,
-  ) {
-    const pfid = await this.databaseService.quizToPlatformNdCourse.findFirst({
-      where: {
-        platformId: platFormId,
-      },
-    });
-    if (pfid) {
-      return this.databaseService.quizToPlatformNdCourse.create({
-        data: {
-          quizId: quizLinkCourseDto.quizId,
-          courseId: quizLinkCourseDto.courseId,
-          platformId: platFormId,
-          interface: quizLinkCourseDto.interface,
-          slug: quizLinkCourseDto.slug,
-        },
-      });
-    }
-    return pfid;
-  }
+  // async quizToPlatForm(
+  //   platFormId: number,
+  //   quizLinkCourseDto: QuizToPlatformNdCourseDto,
+  // ) {
+  //   const pfid = await this.databaseService.quizToPlatformNdCourse.findFirst({
+  //     where: {
+  //       platformId: platFormId,
+  //     },
+  //   });
+  //   if (pfid) {
+  //     return this.databaseService.quizToPlatformNdCourse.create({
+  //       data: {
+  //         quizId: quizLinkCourseDto.quizId,
+  //         courseId: quizLinkCourseDto.courseId,
+  //         platformId: platFormId,
+  //         interface: quizLinkCourseDto.interface,
+  //         slug: quizLinkCourseDto.slug,
+  //       },
+  //     });
+  //   }
+  //   return pfid;
+  // }
 }
 
 // if (quizAttemptStartDto.quizId && !quizAttemptStartDto.attemptId) {

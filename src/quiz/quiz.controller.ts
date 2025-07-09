@@ -49,15 +49,15 @@ export class QuizController {
 
   // create QuizToPlatformNdCourse
 
-  @UseGuards(CheckAuthGuard)
-  @Post('platform')
-  addQuizPlatform(
-    @Request() req: CustomRequest,
-    @Body(new ValidationPipe({ transform: true }))
-    quizLinkCourseDto: QuizToPlatformNdCourseDto,
-  ) {
-    return this.quizService.quizToPlatForm(req.platformid, quizLinkCourseDto);
-  }
+  // @UseGuards(CheckAuthGuard)
+  // @Post('platform')
+  // addQuizPlatform(
+  //   @Request() req: CustomRequest,
+  //   @Body(new ValidationPipe({ transform: true }))
+  //   quizLinkCourseDto: QuizToPlatformNdCourseDto,
+  // ) {
+  //   return this.quizService.quizToPlatForm(req.platformid, quizLinkCourseDto);
+  // }
 
   @Get('allanswers')
   getAllQuizAnswers() {

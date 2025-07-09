@@ -1,39 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Transform } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import {
+  IsArray,
   IsBoolean,
   IsDateString,
   IsNumber,
   IsOptional,
   IsString,
+  ValidateNested,
 } from 'class-validator';
 
-
-class QuizToPlatformNdCourseDto {
-  @ApiProperty()
-  @IsNumber()
-  quizId: number;
-
-  @ApiProperty()
-  @IsOptional()
-  @IsNumber()
-  courseId: number;
-
-  @ApiProperty()
-  @IsOptional()
-  @IsNumber()
-  platformId: number;
-
-  @ApiProperty()
-  @IsOptional()
-  @IsString()
-  interface: string;
-
-  @ApiProperty()
-  @IsOptional()
-  @IsString()
-  slug: string;
-}
 
 export class CreateQuizDto {
   @ApiProperty()
@@ -101,7 +77,28 @@ export class CreateQuizDto {
   @IsDateString()
   updatedAt: Date;
 
+    @ApiProperty()
+  @IsOptional()
+  @IsString()
+  longDescription: string;
+
   @ApiProperty()
   @IsOptional()
-  courseNdPlatform : QuizToPlatformNdCourseDto
+  @IsString()
+  shortDescription: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  logo: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  regStartTime: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  regEndTime: string;
 }
