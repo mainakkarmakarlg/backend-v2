@@ -3252,8 +3252,14 @@ export class QuizService {
 
   // new for create quiz
   async createQuiz(createQuizDto: CreateQuizDto) {
+    const { CourseNdPlatform, ...createQuizDtoRawData } = createQuizDto;
     return await this.databaseService.quiz.create({
-      data: createQuizDto,
+      data: {
+        ...createQuizDtoRawData,
+        CourseNdPlatform: {
+          create: CourseNdPlatform,
+        },
+      },
     });
   }
 

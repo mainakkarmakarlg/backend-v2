@@ -3,10 +3,11 @@ import { Transform } from 'class-transformer';
 import {
   IsBoolean,
   IsDateString,
-  IsInt,
+  IsNumber,
   IsOptional,
   IsString,
 } from 'class-validator';
+import { QuizToPlatformNdCourseDto } from './quiz-link-course.dto';
 
 export class CreateQuizDto {
   @ApiProperty()
@@ -31,7 +32,7 @@ export class CreateQuizDto {
   @ApiProperty()
   @IsOptional()
   @Transform(({ value }) => parseInt(value, 10))
-  @IsInt()
+  @IsNumber()
   duration: number;
 
   @ApiProperty()
@@ -46,8 +47,7 @@ export class CreateQuizDto {
 
   @ApiProperty()
   @IsOptional()
-  @Transform(({ value }) => parseInt(value, 10))
-  @IsInt()
+  @IsNumber()
   quizId: number;
 
   @ApiProperty()
@@ -74,4 +74,8 @@ export class CreateQuizDto {
   @IsOptional()
   @IsDateString()
   updatedAt: Date;
+
+  @ApiProperty()
+  @IsOptional()
+  CourseNdPlatform: QuizToPlatformNdCourseDto[];
 }
