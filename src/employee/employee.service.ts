@@ -268,9 +268,14 @@ export class EmployeeService {
   }
 
   async initializeConnection(client: CustomEmployeeSocketClient) {
-    if (client.handshake.headers.dauth === undefined) {
+    console.log('New Employee Connection', client.handshake.auth.dauth);
+    const dauth = client.handshake.headers.dauth || client.handshake.auth.dauth;
+    console.log('query : ', JSON.parse(JSON.stringify(client.handshake.query)));
+
+    if (!dauth) {
       return client.disconnect();
     }
+
     const platForm = await this.databaseService.platform.findFirst({
       where: {
         OR: [
@@ -278,12 +283,12 @@ export class EmployeeService {
             origin: client.handshake.headers.origin,
           },
           {
-            auth: client.handshake.headers.dauth,
+            auth: dauth,
           },
         ],
       },
     });
-    if (!platForm || platForm.name !== 'Growth Manager') {
+    if (!platForm || platForm.name !== 'Growth Manager WebView') {
       return client.disconnect();
     }
     client.platformId = platForm.id;
