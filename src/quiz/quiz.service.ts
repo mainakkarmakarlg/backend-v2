@@ -883,6 +883,10 @@ export class QuizService {
           },
         },
       });
+
+      console.log("quiz : " , quiz);
+      
+
     } else if (quizAttemptStartDto.slug) {
       quiz = await this.databaseService.quiz.findFirst({
         where: {
@@ -1158,6 +1162,11 @@ export class QuizService {
               });
             }
           } else {
+            console.log("user id : " , client.userId );
+            console.log("quiz id : " , quiz.id  , quizAttemptStartDto.quizId );
+            console.log("platform id : " , client.platformId );
+
+            
             quizAttempt = await this.databaseService.userQuizAttempt.create({
               data: {
                 userId: client.userId,
@@ -1317,7 +1326,7 @@ export class QuizService {
       //     new Date().getSeconds() - time.getSeconds() + quizAttempt.timeTaken;
 
       //   if (timeTaken <= quiz.duration) {
-      this.handleDurationQuizes(client);
+      // this.handleDurationQuizes(client);
       //   }
       // }
     }
@@ -3239,11 +3248,11 @@ export class QuizService {
       .in(room)
       .fetchSockets();
 
-    console.log(
-      sockets?.map((socket: any) => ({
-        data: socket.client.sockets,
-      })),
-    );
+    // console.log(
+    //   sockets?.map((socket: any) => ({
+    //     data: socket.client.sockets,
+    //   })),
+    // );
 
     return sockets?.map((socket: any) => ({
       data: socket.client.sockets,

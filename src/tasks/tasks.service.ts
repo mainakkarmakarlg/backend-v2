@@ -210,11 +210,6 @@ export class TasksService {
     const oneDayLater = new Date(today);
     oneDayLater.setDate(today.getDate() + 1);
     oneDayLater.setHours(0, 0, 0, 0);
-    console.log(oneDayLater, 'One Day Later');
-    console.log(
-      'onedaymore',
-      new Date(oneDayLater.getTime() + 24 * 60 * 60 * 1000),
-    );
     const chanakya = await this.databaseService.quiz.findMany({
       where: {
         id: 17,

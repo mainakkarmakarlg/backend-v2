@@ -126,7 +126,6 @@ export class PlatformService {
       },
     });
     for (const template of quizTemplate) {
-      console.log('template', template);
       const email = 'amansonii.lg@gmail.com';
       const name = 'Durgesh Tiwari';
       await this.emailService.sendBrevoMail(

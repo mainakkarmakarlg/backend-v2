@@ -2971,7 +2971,6 @@ export class UserService {
 
   //#region Websocket
   async initSocket(client: CustomUserSocketClient) {
-    console.log(`New Socket Connection : `, client);
 
     const platform = await this.databaseService.platform.findFirst({
       where: {
