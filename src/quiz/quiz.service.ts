@@ -884,7 +884,7 @@ export class QuizService {
         },
       });
 
-      console.log("quiz : " , quiz);
+      // console.log("quiz : " , quiz);
       
 
     } else if (quizAttemptStartDto.slug) {
@@ -1162,9 +1162,9 @@ export class QuizService {
               });
             }
           } else {
-            console.log("user id : " , client.userId );
-            console.log("quiz id : " , quiz.id  , quizAttemptStartDto.quizId );
-            console.log("platform id : " , client.platformId );
+            // console.log("user id : " , client.userId );
+            // console.log("quiz id : " , quiz.id  , quizAttemptStartDto.quizId );
+            // console.log("platform id : " , client.platformId );
 
             
             quizAttempt = await this.databaseService.userQuizAttempt.create({

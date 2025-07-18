@@ -347,7 +347,7 @@ export class UserController {
     resultAnalysisDto: ResultAnalysisDto,
     @UploadedFiles() files: { resultPdf?: Express.Multer.File[] } = {},
   ) {
-    console.log('Result Analysis DTO:', resultAnalysisDto);
+    // console.log('Result Analysis DTO:', resultAnalysisDto);
 
     return this.userService.resultAnalysis(
       req.userid,

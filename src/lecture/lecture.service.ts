@@ -26,14 +26,14 @@ export class LectureService {
     if (!courseId) {
       throw new BadRequestException('You are not watching any course');
     }
-    console.log(
-      'courseId',
-      courseId,
-      'userId',
-      userId,
-      'platformId',
-      platformId,
-    );
+    // console.log(
+    //   'courseId',
+    //   courseId,
+    //   'userId',
+    //   userId,
+    //   'platformId',
+    //   platformId,
+    // );
 
     const lectures = await this.databaseService.lectureInfo.findMany({
       where: {
