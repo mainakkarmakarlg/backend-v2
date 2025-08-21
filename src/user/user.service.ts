@@ -2971,7 +2971,6 @@ export class UserService {
 
   //#region Websocket
   async initSocket(client: CustomUserSocketClient) {
-
     const platform = await this.databaseService.platform.findFirst({
       where: {
         OR: [
@@ -3302,14 +3301,14 @@ export class UserService {
           courseId: courseId,
         },
       });
-      if (
-        enrollment &&
-        enrollment.enrollmentId !== resultAnalysisDto.enrollmentId
-      ) {
-        throw new NotAcceptableException(
-          'Enrollment ID does not match with the user',
-        );
-      }
+      // if (
+      //   enrollment &&
+      //   enrollment.enrollmentId !== resultAnalysisDto.enrollmentId
+      // ) {
+      //   throw new NotAcceptableException(
+      //     'Enrollment ID does not match with the user',
+      //   );
+      // }
       if (!enrollment) {
         const newEnrollment = await this.databaseService.courseUserMeta.create({
           data: {
@@ -3503,19 +3502,18 @@ export class UserService {
     resultAnalysisDto: ResultAnalysisSeedDto,
     files: Express.Multer.File[],
   ) {
-    
     const { courseId, marks } = resultAnalysisDto;
     const attacmentObject = [];
     const attachment = {
       link: resultAnalysisDto.attachment,
       type: 'application/pdf',
-    }
+    };
     attacmentObject.push(attachment);
     const formdata = await this.databaseService.userFormToUser.findFirst({
       where: {
         attachment: JSON.parse(JSON.stringify(attacmentObject)),
-      }
-    })
+      },
+    });
     const formdataToGive = {
       courseId: courseId,
       marks: marks,
