@@ -2,14 +2,24 @@ import {
   ObjectCannedACL,
   S3Client,
   DeleteObjectCommand,
+  GetObjectCommand,
 } from '@aws-sdk/client-s3';
 import { Upload } from '@aws-sdk/lib-storage';
 import { Injectable } from '@nestjs/common';
+import {
+  createCipheriv,
+  createDecipheriv,
+  randomBytes,
+  scrypt,
+  scryptSync,
+} from 'crypto';
 
 @Injectable()
 export class VultrService {
   private readonly s3Client: S3Client;
   private readonly bucket: string;
+  private readonly secretKeyForS3Image: string =
+    'hruigheruihgu9038r59348ifj34ju99j49vj';
 
   constructor() {
     this.s3Client = new S3Client({
@@ -23,6 +33,29 @@ export class VultrService {
     });
     this.bucket = process.env.VULTR_BUCKET;
   }
+
+  encryptFilePath(filePath: string): string {
+    const salt = randomBytes(16);
+    const iv = randomBytes(16);
+    const key = scryptSync(this.secretKeyForS3Image, salt, 32);
+    const cipher = createCipheriv('aes-256-cbc', key, iv);
+    let encrypted = cipher.update(filePath, 'utf8', 'hex');
+    encrypted += cipher.final('hex');
+    return `${salt.toString('hex')}:${iv.toString('hex')}:${encrypted}`;
+  }
+
+  decryptFilePath(encryptedLink: string): string {
+    const [saltHex, ivHex, encrypted] = encryptedLink.split(':');
+    const salt = Buffer.from(saltHex, 'hex');
+    const iv = Buffer.from(ivHex, 'hex');
+    const key = scryptSync(this.secretKeyForS3Image, salt, 32);
+
+    const decipher = createDecipheriv('aes-256-cbc', key, iv);
+    let decrypted = decipher.update(encrypted, 'hex', 'utf8');
+    decrypted += decipher.final('utf8');
+    return decrypted;
+  }
+
   async uploadToVultr(
     filename: string,
     file: Express.Multer.File,
@@ -62,6 +95,27 @@ export class VultrService {
       return data;
     } catch (err) {
       console.error('Error deleting from Vultr S3:', err);
+    }
+  }
+
+  generateProxyUrl(filePath: string): string {
+    const encryptedLink = this.encryptFilePath(filePath);
+    // return `http://192.168.1.74:3000/api/proxy/${encryptedLink}`;
+    return encryptedLink;
+  }
+
+  async fetchFileFromVultr(filePath: string) {
+    const params = {
+      Bucket: this.bucket,
+      Key: filePath,
+    };
+
+    try {
+      const command = new GetObjectCommand(params);
+      const data = await this.s3Client.send(command);
+      return data.Body;
+    } catch (error) {
+      throw new Error('Error fetching file from Vultr S3');
     }
   }
 }

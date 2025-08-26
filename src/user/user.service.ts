@@ -4582,4 +4582,37 @@ export class UserService {
     return template;
   }
   //#endregion
+
+  /**
+   * take vulture image as an parameter and do some operation
+   */
+
+  // async s3ImageEncryptions(userId: string, s3ImageLink: string) {
+  //   const currenttime = new Date().toISOString();
+  //   const uuIdForS3Image =
+  //     'aswinibajaj.growthcommand' +
+  //     '.' +
+  //     userId +
+  //     '.' +
+  //     currenttime + // uuid
+  //     '.' +
+  //     s3ImageLink;
+  //   return uuIdForS3Image;
+  // }  
+
+  // async s3ImageEncryptions(
+  //   userId: string,
+  //   s3ImageLink: string,
+  // ): Promise<string> {
+  //     const currentTime = new Date().toISOString();
+
+  //   const uniqueImageId = [
+  //     'aswinibajaj.growthcommand',
+  //     userId,
+  //     currentTime,
+  //     'i&&md',
+  //     s3ImageLink,
+  //   ].join('.');
+  //   return uniqueImageId;
+  // }
 }

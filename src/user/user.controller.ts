@@ -413,4 +413,14 @@ export class UserController {
   ) {
     return this.userService.findForms(formNameDto, req.platformid);
   }
+
+  // @UseGuards(AuthGuard)
+  // @Post('getImage')
+  // async getImage(
+  //   @Body('data') data: any,
+  //   @Request() req: CustomRequest,
+  // ) {
+  //   // return the image
+  //   return this.userService.s3ImageEncryptions(data, req);
+  // }
 }
