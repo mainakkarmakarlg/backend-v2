@@ -104,6 +104,10 @@ export class VultrService {
     return encryptedLink;
   }
 
+  generateOriginalUrl(filename: string): string {
+    return `${process.env.VULTR_ENDPOINT}/${this.bucket}/${filename}`;
+  }
+
   private async streamToBuffer(stream: Readable): Promise<Buffer> {
     const chunks: Buffer[] = [];
     return new Promise((resolve, reject) => {
