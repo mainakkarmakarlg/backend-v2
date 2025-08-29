@@ -121,7 +121,7 @@ export class VultrService {
   /**
    * to convert a readable stream
    * @param stream recived a file
-   * @returns store raw binary data in a []
+   * @returns store raw binary data in []
    */
   private async streamToBuffer(stream: Readable): Promise<Buffer> {
     const chunks: Buffer[] = [];
