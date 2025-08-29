@@ -43,9 +43,7 @@ export class VultrController {
   ) {
     try {
       const cleanToken = token.replace('token=', '');
-      console.log('Clean Token:', cleanToken);
       const filePath = this.vultrService.decryptFilePath(cleanToken);
-      console.log('Decrypted File Path:', filePath);
       const fileData = await this.vultrService.fetchFileFromVultr(filePath);
       console.log(fileData);
 

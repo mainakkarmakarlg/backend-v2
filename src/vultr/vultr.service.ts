@@ -99,15 +99,30 @@ export class VultrService {
     }
   }
 
+  /**
+   * 
+   * @param filePath take file path that is original file
+   * @returns it return an proxy link 
+   */
   generateProxyUrl(filePath: string): string {
     const encryptedLink = this.encryptFilePath(filePath);
     return encryptedLink;
   }
 
+  /**
+   * 
+   * @param filename take file path that is original image
+   * @returns return the original vulture link 
+   */
   generateOriginalUrl(filename: string): string {
     return `${process.env.VULTR_ENDPOINT}/${this.bucket}/${filename}`;
   }
 
+  /**
+   * to convert a readable stream
+   * @param stream recived a file
+   * @returns store raw binary data in a []
+   */
   private async streamToBuffer(stream: Readable): Promise<Buffer> {
     const chunks: Buffer[] = [];
     return new Promise((resolve, reject) => {
