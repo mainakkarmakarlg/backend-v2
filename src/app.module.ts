@@ -7,7 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { PlatformModule } from './platform/platform.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { EmployeeModule } from './employee/employee.module';
-import { VultrModule } from './vultr/vultr.module';
+
 import { RazorpayModule } from 'nestjs-razorpay';
 import { EmailsModule } from './email/email.module';
 import { NotificationModule } from './notification/notification.module';
@@ -26,6 +26,7 @@ import { DoubtforumModule } from './doubtforum/doubtforum.module';
 import { DeviceModule } from './device/device.module';
 import { LeadModule } from './lead/lead.module';
 import { QuizModule } from './quiz/quiz.module';
+import { VultrModule } from './vultr/vultr.module';
 
 @Module({
   imports: [

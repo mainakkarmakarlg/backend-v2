@@ -21,7 +21,7 @@ import {
 import { Response } from 'express';
 
 import { UserService } from './user.service';
-import { AuthGuard } from 'src/auth/guards/auth.guard';
+
 import { CustomRequest } from 'src/common/interface/custom-request.interface';
 import { CartQueryDto } from './dto/cart-query.dto';
 import { CartPostDto } from './dto/cart-post.dto';
@@ -45,6 +45,7 @@ import {
 } from './dto/result-analysis.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { FormNameDto } from './dto/form-name.dto';
+import { AuthGuard } from 'src/auth/guards/auth.guard';
 
 @Controller('user')
 @ApiBearerAuth()

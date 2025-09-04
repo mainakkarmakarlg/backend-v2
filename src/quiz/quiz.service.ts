@@ -885,8 +885,6 @@ export class QuizService {
       });
 
       // console.log("quiz : " , quiz);
-      
-
     } else if (quizAttemptStartDto.slug) {
       quiz = await this.databaseService.quiz.findFirst({
         where: {
@@ -1166,7 +1164,6 @@ export class QuizService {
             // console.log("quiz id : " , quiz.id  , quizAttemptStartDto.quizId );
             // console.log("platform id : " , client.platformId );
 
-            
             quizAttempt = await this.databaseService.userQuizAttempt.create({
               data: {
                 userId: client.userId,
@@ -1324,7 +1321,6 @@ export class QuizService {
       // if (quizAttempt && quizAttemptStartDto.attemptId) {
       //   timeTaken =
       //     new Date().getSeconds() - time.getSeconds() + quizAttempt.timeTaken;
-
       //   if (timeTaken <= quiz.duration) {
       // this.handleDurationQuizes(client);
       //   }

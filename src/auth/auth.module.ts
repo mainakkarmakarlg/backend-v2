@@ -8,6 +8,7 @@ import { EmailsModule } from 'src/email/email.module';
 import { WhatsappModule } from 'src/whatsapp/whatsapp.module';
 import { HttpModule } from '@nestjs/axios';
 import { LeadModule } from 'src/lead/lead.module';
+import { VultrController } from 'src/vultr/vultr.controller';
 
 @Module({
   imports: [
@@ -28,6 +29,8 @@ import { LeadModule } from 'src/lead/lead.module';
 })
 export class AuthModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(PlatformCheckMiddleware).forRoutes(AuthController);
+    consumer
+      .apply(PlatformCheckMiddleware)
+      .forRoutes(AuthController, VultrController);
   }
 }

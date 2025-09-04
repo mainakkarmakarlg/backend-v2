@@ -4598,7 +4598,7 @@ export class UserService {
   //     '.' +
   //     s3ImageLink;
   //   return uuIdForS3Image;
-  // }  
+  // }
 
   // async s3ImageEncryptions(
   //   userId: string,
