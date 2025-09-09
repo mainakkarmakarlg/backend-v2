@@ -14,6 +14,7 @@ import { VultrService } from './vultr.service';
 import { Response } from 'express';
 import { checkimageaccess } from 'src/auth/guards/checkimageaccess.guard';
 import { ImageAuthGuard } from 'src/auth/guards/imagegetauth.guard';
+import { AuthGuard } from 'src/auth/guards/auth.guard';
 
 @Controller('vultr')
 export class VultrController {
@@ -80,7 +81,6 @@ export class VultrController {
         Number(body.userId),
       );
       const fileData = await this.vultrService.fetchFileFromVultr(filePath);
-      console.log(fileData);
 
       res.setHeader('Content-Type', fileData.contentType || 'image/jpeg');
       res.setHeader('Content-Length', fileData.contentLength);

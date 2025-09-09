@@ -33,10 +33,8 @@ describe('VultrController', () => {
       .get(`/vultr/generate-url/${filePath}`)
       .expect(200); // Ensure HTTP 200 status
 
-    // Check if the response matches the expected proxy URL
     expect(response.body).toEqual({ proxyUrl: expectedProxyUrl });
 
-    // Verify that the service method was called with the correct file path
     expect(vultrService.generateProxyUrl).toHaveBeenCalledWith(filePath);
   });
 
